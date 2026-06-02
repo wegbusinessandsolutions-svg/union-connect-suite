@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useRoles, ROLE_LABELS } from "@/hooks/use-roles";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export const Route = createFileRoute("/_authenticated/")({
+export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Painel" }] }),
   component: DashboardRouter,
 });
