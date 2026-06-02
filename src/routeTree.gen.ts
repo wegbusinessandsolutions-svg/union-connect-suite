@@ -199,18 +199,6 @@ const AuthenticatedAdminAuditLogsRoute =
     path: '/audit-logs',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedExpedicaoEntregasRoute =
-  AuthenticatedExpedicaoEntregasRouteImport.update({
-    id: '/entregas',
-    path: '/entregas',
-    getParentRoute: () => AuthenticatedExpedicaoRoute,
-  } as any)
-const AuthenticatedExpedicaoEstoqueRoute =
-  AuthenticatedExpedicaoEstoqueRouteImport.update({
-    id: '/estoque',
-    path: '/estoque',
-    getParentRoute: () => AuthenticatedExpedicaoRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
