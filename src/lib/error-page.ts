@@ -1,3 +1,6 @@
+// Altere para o e-mail do seu time de suporte.
+const SUPPORT_EMAIL = "suporte@exemplo.com";
+
 export function renderErrorPage(errorId: string): string {
   const safeId = errorId.replace(/[^a-zA-Z0-9_-]/g, "");
   return `<!doctype html>
