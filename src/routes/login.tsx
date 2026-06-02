@@ -1,11 +1,17 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+} from "@/components/ui/form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -25,6 +31,8 @@ function LoginPage() {
     });
   }, [navigate, redirect]);
 
+  const onAuthed = () => navigate({ to: redirect, replace: true });
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
@@ -38,88 +46,139 @@ function LoginPage() {
               <TabsTrigger value="login">Entrar</TabsTrigger>
               <TabsTrigger value="signup">Cadastrar</TabsTrigger>
             </TabsList>
-            <TabsContent value="login"><SignInForm onSuccess={() => navigate({ to: redirect, replace: true })} /></TabsContent>
+            <TabsContent value="login"><SignInForm onSuccess={onAuthed} /></TabsContent>
             <TabsContent value="signup"><SignUpForm /></TabsContent>
           </Tabs>
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            <Link to="/" className="hover:underline">Voltar para o início</Link>
-          </p>
+          <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
+            <Link to="/forgot-password" className="hover:underline">Esqueci minha senha</Link>
+            <Link to="/" className="hover:underline">Voltar ao início</Link>
+          </div>
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function SignInForm({ onSuccess }: { onSuccess: () => void }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+const signInSchema = z.object({
+  email: z.string().trim().email("E-mail inválido").max(255),
+  password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
+});
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) setError(error.message);
-    else onSuccess();
-  };
+function SignInForm({ onSuccess }: { onSuccess: () => void }) {
+  const form = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const submit = form.handleSubmit(async (values) => {
+    const { error } = await supabase.auth.signInWithPassword(values);
+    if (error) {
+      toast.error("Não foi possível entrar", { description: error.message });
+      return;
+    }
+    onSuccess();
+  });
 
   return (
-    <form onSubmit={submit} className="space-y-4 pt-4">
-      <Field id="login-email" label="E-mail" type="email" value={email} onChange={setEmail} />
-      <Field id="login-pwd" label="Senha" type="password" value={password} onChange={setPassword} />
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Entrando…" : "Entrar"}
-      </Button>
-    </form>
+    <Form {...form}>
+      <form onSubmit={submit} className="space-y-4 pt-4">
+        <FormField name="email" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>E-mail</FormLabel>
+            <FormControl><Input type="email" autoComplete="email" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="password" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Senha</FormLabel>
+            <FormControl><Input type="password" autoComplete="current-password" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Entrando…" : "Entrar"}
+        </Button>
+      </form>
+    </Form>
   );
 }
+
+const signUpSchema = z.object({
+  name: z.string().trim().min(2, "Informe seu nome").max(120),
+  email: z.string().trim().email("E-mail inválido").max(255),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  password: z.string().min(8, "Mínimo de 8 caracteres").max(72),
+  confirm: z.string(),
+}).refine((d) => d.password === d.confirm, {
+  message: "As senhas não coincidem", path: ["confirm"],
+});
 
 function SignUpForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { name: "", email: "", phone: "", password: "", confirm: "" },
+  });
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMsg(null);
+  const submit = form.handleSubmit(async (values) => {
     const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: window.location.origin },
+      email: values.email,
+      password: values.password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/login`,
+        data: { name: values.name, phone: values.phone || null },
+      },
     });
-    setLoading(false);
-    if (error) setError(error.message);
-    else setMsg("Cadastro criado. Confirme o e-mail e depois faça login.");
-  };
+    if (error) {
+      toast.error("Não foi possível cadastrar", { description: error.message });
+      return;
+    }
+    toast.success("Cadastro criado", { description: "Confirme o e-mail e depois faça login." });
+    form.reset();
+  });
 
   return (
-    <form onSubmit={submit} className="space-y-4 pt-4">
-      <Field id="su-email" label="E-mail" type="email" value={email} onChange={setEmail} />
-      <Field id="su-pwd" label="Senha (mín. 6)" type="password" value={password} onChange={setPassword} />
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {msg && <p className="text-sm text-green-700">{msg}</p>}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Cadastrando…" : "Cadastrar"}
-      </Button>
-    </form>
-  );
-}
-
-function Field({
-  id, label, type, value, onChange,
-}: { id: string; label: string; type: string; value: string; onChange: (v: string) => void }) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type={type} required value={value} onChange={(e) => onChange(e.target.value)} />
-    </div>
+    <Form {...form}>
+      <form onSubmit={submit} className="space-y-4 pt-4">
+        <FormField name="name" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Nome</FormLabel>
+            <FormControl><Input autoComplete="name" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="email" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>E-mail</FormLabel>
+            <FormControl><Input type="email" autoComplete="email" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="phone" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Telefone (opcional)</FormLabel>
+            <FormControl><Input type="tel" autoComplete="tel" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="password" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Senha</FormLabel>
+            <FormControl><Input type="password" autoComplete="new-password" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <FormField name="confirm" control={form.control} render={({ field }) => (
+          <FormItem>
+            <FormLabel>Confirmar senha</FormLabel>
+            <FormControl><Input type="password" autoComplete="new-password" {...field} /></FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
+        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Cadastrando…" : "Cadastrar"}
+        </Button>
+      </form>
+    </Form>
   );
 }
