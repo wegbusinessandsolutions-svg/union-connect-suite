@@ -38,6 +38,8 @@ import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_aut
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
+import { Route as AuthenticatedExpedicaoEntregasRouteImport } from './routes/_authenticated.expedicao.entregas'
+import { Route as AuthenticatedExpedicaoEstoqueRouteImport } from './routes/_authenticated.expedicao.estoque'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
