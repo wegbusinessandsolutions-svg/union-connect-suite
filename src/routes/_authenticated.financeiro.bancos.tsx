@@ -171,6 +171,9 @@ function BankAccountFormDialog({
   item, banks, onClose, onSaved,
 }: { item: BankAccount | null; banks: Bank[]; onClose: () => void; onSaved: () => void }) {
   const isEdit = !!item;
+  const initialBankName = item?.bank_id ? (banks.find((b) => b.id === item.bank_id)?.name ?? "") : "";
+  const [bankName, setBankName] = useState(initialBankName);
+
   const form = useForm<BankAccountForm>({
     resolver: zodResolver(bankAccountSchema) as never,
     defaultValues: item ? {
@@ -187,10 +190,22 @@ function BankAccountFormDialog({
     },
   });
 
+  async function resolveBankId(name: string): Promise<string | null> {
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+    const existing = banks.find((b) => b.name.toLowerCase() === trimmed.toLowerCase());
+    if (existing) return existing.id;
+    const { data, error } = await supabase.from("banks").insert({ name: trimmed }).select("id").single();
+    if (error) throw error;
+    return data.id;
+  }
+
   const submit = form.handleSubmit(async (values) => {
-    const payload: Record<string, unknown> = {};
-    for (const [k, v] of Object.entries(values)) payload[k] = v === "" ? null : v;
     try {
+      const bank_id = await resolveBankId(bankName);
+      const merged: Record<string, unknown> = { ...values, bank_id };
+      const payload: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(merged)) payload[k] = v === "" ? null : v;
       if (isEdit) {
         const { error } = await supabase.from("bank_accounts").update(payload as never).eq("id", item!.id);
         if (error) throw error;
@@ -210,16 +225,16 @@ function BankAccountFormDialog({
         <DialogHeader><DialogTitle>{isEdit ? "Editar conta" : "Nova conta bancária"}</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           <Field label="Banco">
-            <Select value={form.watch("bank_id") || "__none"} onValueChange={(v) => form.setValue("bank_id", v === "__none" ? "" : v)}>
-              <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none">— Sem banco —</SelectItem>
-                {banks.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {banks.length === 0 && <p className="text-xs text-muted-foreground">Nenhum banco cadastrado. Cadastre em Admin.</p>}
+            <Input
+              list="bank-suggestions"
+              value={bankName}
+              onChange={(e) => setBankName(e.target.value)}
+              placeholder="Digite o nome do banco (ex.: Itaú, Bradesco)"
+            />
+            <datalist id="bank-suggestions">
+              {banks.map((b) => <option key={b.id} value={b.name} />)}
+            </datalist>
+            <p className="text-xs text-muted-foreground">Se o banco ainda não existir, será criado automaticamente.</p>
           </Field>
           <Field label="Tipo *">
             <Select value={form.watch("type")} onValueChange={(v) => form.setValue("type", v as BankAccountForm["type"])}>
