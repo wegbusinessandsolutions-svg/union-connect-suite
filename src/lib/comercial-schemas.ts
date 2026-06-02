@@ -64,7 +64,7 @@ export type OrderItemForm = z.infer<typeof orderItemSchema>;
 
 export const orderSchema = z.object({
   client_id: z.string().uuid("Selecione um cliente"),
-  type: z.enum(["ecommerce", "balcao", "telefone", "whatsapp"]).default("balcao"),
+  type: z.enum(["pdv", "ecommerce", "orcamento"]).default("pdv"),
   payment_method: z.string().trim().max(50).optional().or(z.literal("")),
   installments: z.coerce.number().int().min(1).max(24).default(1),
   discount_pct: z.coerce.number().min(0).max(100).default(0),
