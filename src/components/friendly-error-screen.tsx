@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { logErrorToService } from "@/lib/error-logger";
 
-// Altere para o e-mail do seu time de suporte.
-const SUPPORT_EMAIL = "suporte@exemplo.com";
+// Configure via env: VITE_SUPPORT_EMAIL (Workspace Settings → Build Secrets).
+const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL ?? "suporte@exemplo.com";
 
 type Props = {
   error: Error;

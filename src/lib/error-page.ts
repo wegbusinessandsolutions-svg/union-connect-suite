@@ -1,5 +1,6 @@
-// Altere para o e-mail do seu time de suporte.
-const SUPPORT_EMAIL = "suporte@exemplo.com";
+// Configure via env: VITE_SUPPORT_EMAIL (Workspace Settings → Build Secrets).
+// Vite inlines import.meta.env values in both client and server bundles at build time.
+const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL ?? "suporte@exemplo.com";
 
 export function renderErrorPage(errorId: string): string {
   const safeId = errorId.replace(/[^a-zA-Z0-9_-]/g, "");
