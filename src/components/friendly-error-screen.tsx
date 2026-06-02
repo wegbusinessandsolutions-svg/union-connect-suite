@@ -52,6 +52,12 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
       setCopied(false);
     }
   };
+  const supportHref = useMemo(() => {
+    const subject = `Erro na aplicação — ${errorId}`;
+    const body = `Olá, encontrei um erro na aplicação.\n\n${details}\n\nDescreva o que estava fazendo quando o erro ocorreu:\n`;
+    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, [details, errorId]);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
