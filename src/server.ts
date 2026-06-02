@@ -53,13 +53,15 @@ export default {
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(request, response);
     } catch (error) {
-      console.error(error);
+      const errorId = crypto.randomUUID();
+      console.error(`[ssr-error ${errorId}]`, error);
       await forwardErrorToService(error, {
         source: "ssr_wrapper",
         route: new URL(request.url).pathname + new URL(request.url).search,
         userAgent: request.headers.get("user-agent"),
+        extra: { errorId },
       });
-      return new Response(renderErrorPage(), {
+      return new Response(renderErrorPage(errorId), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
       });
