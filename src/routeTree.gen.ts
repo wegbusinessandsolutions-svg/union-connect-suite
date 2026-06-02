@@ -36,7 +36,14 @@ import { Route as AuthenticatedExpedicaoEntregasRouteImport } from './routes/_au
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
+import { Route as AuthenticatedClientePedidosRouteImport } from './routes/_authenticated.cliente.pedidos'
+import { Route as AuthenticatedClienteDadosRouteImport } from './routes/_authenticated.cliente.dados'
+import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_authenticated.cliente.catalogo'
+import { Route as AuthenticatedClienteCashbackRouteImport } from './routes/_authenticated.cliente.cashback'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
+import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated.admin.relatorios'
+import { Route as AuthenticatedAdminFuncionariosRouteImport } from './routes/_authenticated.admin.funcionarios'
+import { Route as AuthenticatedAdminEmpresaRouteImport } from './routes/_authenticated.admin.empresa'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -187,10 +194,52 @@ const AuthenticatedComercialClientesRoute =
     path: '/clientes',
     getParentRoute: () => AuthenticatedComercialRoute,
   } as any)
+const AuthenticatedClientePedidosRoute =
+  AuthenticatedClientePedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
+const AuthenticatedClienteDadosRoute =
+  AuthenticatedClienteDadosRouteImport.update({
+    id: '/dados',
+    path: '/dados',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
+const AuthenticatedClienteCatalogoRoute =
+  AuthenticatedClienteCatalogoRouteImport.update({
+    id: '/catalogo',
+    path: '/catalogo',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
+const AuthenticatedClienteCashbackRoute =
+  AuthenticatedClienteCashbackRouteImport.update({
+    id: '/cashback',
+    path: '/cashback',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
     path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRelatoriosRoute =
+  AuthenticatedAdminRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminFuncionariosRoute =
+  AuthenticatedAdminFuncionariosRouteImport.update({
+    id: '/funcionarios',
+    path: '/funcionarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEmpresaRoute =
+  AuthenticatedAdminEmpresaRouteImport.update({
+    id: '/empresa',
+    path: '/empresa',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAuditLogsRoute =
@@ -213,7 +262,14 @@ export interface FileRoutesByFullPath {
   '/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
+  '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
+  '/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -238,7 +294,14 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
+  '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
+  '/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -270,7 +333,14 @@ export interface FileRoutesById {
   '/_authenticated/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/_authenticated/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/_authenticated/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
+  '/_authenticated/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/_authenticated/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
+  '/_authenticated/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/_authenticated/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -302,7 +372,14 @@ export interface FileRouteTypes {
     | '/expedicao'
     | '/financeiro'
     | '/admin/audit-logs'
+    | '/admin/empresa'
+    | '/admin/funcionarios'
+    | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/cliente/cashback'
+    | '/cliente/catalogo'
+    | '/cliente/dados'
+    | '/cliente/pedidos'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -327,7 +404,14 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/dashboard'
     | '/admin/audit-logs'
+    | '/admin/empresa'
+    | '/admin/funcionarios'
+    | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/cliente/cashback'
+    | '/cliente/catalogo'
+    | '/cliente/dados'
+    | '/cliente/pedidos'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -358,7 +442,14 @@ export interface FileRouteTypes {
     | '/_authenticated/expedicao'
     | '/_authenticated/financeiro'
     | '/_authenticated/admin/audit-logs'
+    | '/_authenticated/admin/empresa'
+    | '/_authenticated/admin/funcionarios'
+    | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/cliente/cashback'
+    | '/_authenticated/cliente/catalogo'
+    | '/_authenticated/cliente/dados'
+    | '/_authenticated/cliente/pedidos'
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
@@ -576,11 +667,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedComercialClientesRouteImport
       parentRoute: typeof AuthenticatedComercialRoute
     }
+    '/_authenticated/cliente/pedidos': {
+      id: '/_authenticated/cliente/pedidos'
+      path: '/pedidos'
+      fullPath: '/cliente/pedidos'
+      preLoaderRoute: typeof AuthenticatedClientePedidosRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
+    '/_authenticated/cliente/dados': {
+      id: '/_authenticated/cliente/dados'
+      path: '/dados'
+      fullPath: '/cliente/dados'
+      preLoaderRoute: typeof AuthenticatedClienteDadosRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
+    '/_authenticated/cliente/catalogo': {
+      id: '/_authenticated/cliente/catalogo'
+      path: '/catalogo'
+      fullPath: '/cliente/catalogo'
+      preLoaderRoute: typeof AuthenticatedClienteCatalogoRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
+    '/_authenticated/cliente/cashback': {
+      id: '/_authenticated/cliente/cashback'
+      path: '/cashback'
+      fullPath: '/cliente/cashback'
+      preLoaderRoute: typeof AuthenticatedClienteCashbackRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
       fullPath: '/admin/usuarios'
       preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/relatorios': {
+      id: '/_authenticated/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/funcionarios': {
+      id: '/_authenticated/admin/funcionarios'
+      path: '/funcionarios'
+      fullPath: '/admin/funcionarios'
+      preLoaderRoute: typeof AuthenticatedAdminFuncionariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/empresa': {
+      id: '/_authenticated/admin/empresa'
+      path: '/empresa'
+      fullPath: '/admin/empresa'
+      preLoaderRoute: typeof AuthenticatedAdminEmpresaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/audit-logs': {
@@ -595,12 +735,18 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAuditLogsRoute: typeof AuthenticatedAdminAuditLogsRoute
+  AuthenticatedAdminEmpresaRoute: typeof AuthenticatedAdminEmpresaRoute
+  AuthenticatedAdminFuncionariosRoute: typeof AuthenticatedAdminFuncionariosRoute
+  AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAuditLogsRoute: AuthenticatedAdminAuditLogsRoute,
+  AuthenticatedAdminEmpresaRoute: AuthenticatedAdminEmpresaRoute,
+  AuthenticatedAdminFuncionariosRoute: AuthenticatedAdminFuncionariosRoute,
+  AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -609,10 +755,18 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedClienteRouteChildren {
+  AuthenticatedClienteCashbackRoute: typeof AuthenticatedClienteCashbackRoute
+  AuthenticatedClienteCatalogoRoute: typeof AuthenticatedClienteCatalogoRoute
+  AuthenticatedClienteDadosRoute: typeof AuthenticatedClienteDadosRoute
+  AuthenticatedClientePedidosRoute: typeof AuthenticatedClientePedidosRoute
   AuthenticatedClienteIndexRoute: typeof AuthenticatedClienteIndexRoute
 }
 
 const AuthenticatedClienteRouteChildren: AuthenticatedClienteRouteChildren = {
+  AuthenticatedClienteCashbackRoute: AuthenticatedClienteCashbackRoute,
+  AuthenticatedClienteCatalogoRoute: AuthenticatedClienteCatalogoRoute,
+  AuthenticatedClienteDadosRoute: AuthenticatedClienteDadosRoute,
+  AuthenticatedClientePedidosRoute: AuthenticatedClientePedidosRoute,
   AuthenticatedClienteIndexRoute: AuthenticatedClienteIndexRoute,
 }
 
