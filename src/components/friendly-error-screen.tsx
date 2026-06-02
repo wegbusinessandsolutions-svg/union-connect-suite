@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { logErrorToService } from "@/lib/error-logger";
 
+// Altere para o e-mail do seu time de suporte.
+const SUPPORT_EMAIL = "suporte@exemplo.com";
+
 type Props = {
   error: Error;
   reset?: () => void;
