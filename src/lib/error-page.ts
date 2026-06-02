@@ -1,6 +1,33 @@
-// Configure via env: VITE_SUPPORT_EMAIL (Workspace Settings → Build Secrets).
-// Vite inlines import.meta.env values in both client and server bundles at build time.
-const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL ?? "suporte@exemplo.com";
+// Configure via env (Workspace Settings → Build Secrets):
+//   VITE_SUPPORT_EMAIL              — destination address
+//   VITE_SUPPORT_SUBJECT_TEMPLATE   — subject, e.g. "Erro {errorId} em {route}"
+//   VITE_SUPPORT_BODY_TEMPLATE      — body, multi-line with \n separators
+// Placeholders available in templates: {errorId} {route} {timestamp} {message} {userAgent}
+
+const DEFAULT_SUBJECT = "Erro na aplicação — {errorId}";
+const DEFAULT_BODY = [
+  "Olá, encontrei um erro na aplicação.",
+  "",
+  "Error ID: {errorId}",
+  "Rota: {route}",
+  "Horário: {timestamp}",
+  "User-Agent: {userAgent}",
+  "",
+  "Descreva o que estava fazendo quando o erro ocorreu:",
+  "",
+].join("\n");
+
+const SUPPORT_EMAIL =
+  (import.meta.env.VITE_SUPPORT_EMAIL as string | undefined) ?? "suporte@exemplo.com";
+const SUBJECT_TEMPLATE =
+  (import.meta.env.VITE_SUPPORT_SUBJECT_TEMPLATE as string | undefined) ?? DEFAULT_SUBJECT;
+const BODY_TEMPLATE =
+  (import.meta.env.VITE_SUPPORT_BODY_TEMPLATE as string | undefined) ?? DEFAULT_BODY;
+
+// JSON-encode strings safely for inline <script> embedding.
+function jsString(value: string): string {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
 
 export function renderErrorPage(errorId: string): string {
   const safeId = errorId.replace(/[^a-zA-Z0-9_-]/g, "");
@@ -43,22 +70,45 @@ export function renderErrorPage(errorId: string): string {
     </div>
     <script>
       (function () {
+        var ERROR_ID = ${jsString(safeId)};
+        var SUPPORT_EMAIL = ${jsString(SUPPORT_EMAIL)};
+        var SUBJECT_TEMPLATE = ${jsString(SUBJECT_TEMPLATE)};
+        var BODY_TEMPLATE = ${jsString(BODY_TEMPLATE)};
+
+        function render(tpl, vars) {
+          return tpl.replace(/\\{(\\w+)\\}/g, function (m, k) {
+            return Object.prototype.hasOwnProperty.call(vars, k) && vars[k] != null ? String(vars[k]) : m;
+          });
+        }
+        function vars() {
+          return {
+            errorId: ERROR_ID,
+            route: location.pathname + location.search,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            message: '',
+          };
+        }
+        function buildDetails() {
+          var v = vars();
+          return [
+            'Error ID: ' + v.errorId,
+            'Rota: ' + v.route,
+            'Horário: ' + v.timestamp,
+            'User-Agent: ' + v.userAgent,
+          ].join('\\n');
+        }
+
+        var supportBtn = document.getElementById('support-btn');
+        if (supportBtn) {
+          var v = vars();
+          var subject = render(SUBJECT_TEMPLATE, v);
+          var body = render(BODY_TEMPLATE, v);
+          supportBtn.href = 'mailto:' + SUPPORT_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        }
+
         var btn = document.getElementById('copy-btn');
         var status = document.getElementById('copy-status');
-        var supportBtn = document.getElementById('support-btn');
-        var buildDetails = function () {
-          return [
-            'Error ID: ${safeId}',
-            'Rota: ' + location.pathname + location.search,
-            'Horário: ' + new Date().toISOString(),
-            'User-Agent: ' + navigator.userAgent,
-          ].join('\\n');
-        };
-        if (supportBtn) {
-          var subject = 'Erro na aplicação — ${safeId}';
-          var body = 'Olá, encontrei um erro na aplicação.\\n\\n' + buildDetails() + '\\n\\nDescreva o que estava fazendo quando o erro ocorreu:\\n';
-          supportBtn.href = 'mailto:${SUPPORT_EMAIL}?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-        }
         btn.addEventListener('click', function () {
           var details = buildDetails();
           var done = function () {
