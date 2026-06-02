@@ -26,6 +26,11 @@ import { Route as AuthenticatedExpedicaoIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedComercialIndexRouteImport } from './routes/_authenticated.comercial.index'
 import { Route as AuthenticatedClienteIndexRouteImport } from './routes/_authenticated.cliente.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as AuthenticatedFinanceiroReceberRouteImport } from './routes/_authenticated.financeiro.receber'
+import { Route as AuthenticatedFinanceiroPagarRouteImport } from './routes/_authenticated.financeiro.pagar'
+import { Route as AuthenticatedFinanceiroFornecedoresRouteImport } from './routes/_authenticated.financeiro.fornecedores'
+import { Route as AuthenticatedFinanceiroCentrosCustoRouteImport } from './routes/_authenticated.financeiro.centros-custo'
+import { Route as AuthenticatedFinanceiroBancosRouteImport } from './routes/_authenticated.financeiro.bancos'
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
@@ -120,6 +125,36 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedFinanceiroReceberRoute =
+  AuthenticatedFinanceiroReceberRouteImport.update({
+    id: '/receber',
+    path: '/receber',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
+const AuthenticatedFinanceiroPagarRoute =
+  AuthenticatedFinanceiroPagarRouteImport.update({
+    id: '/pagar',
+    path: '/pagar',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
+const AuthenticatedFinanceiroFornecedoresRoute =
+  AuthenticatedFinanceiroFornecedoresRouteImport.update({
+    id: '/fornecedores',
+    path: '/fornecedores',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
+const AuthenticatedFinanceiroCentrosCustoRoute =
+  AuthenticatedFinanceiroCentrosCustoRouteImport.update({
+    id: '/centros-custo',
+    path: '/centros-custo',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
+const AuthenticatedFinanceiroBancosRoute =
+  AuthenticatedFinanceiroBancosRouteImport.update({
+    id: '/bancos',
+    path: '/bancos',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
 const AuthenticatedComercialProdutosRoute =
   AuthenticatedComercialProdutosRouteImport.update({
     id: '/produtos',
@@ -168,6 +203,11 @@ export interface FileRoutesByFullPath {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
+  '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
+  '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
+  '/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
+  '/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/cliente/': typeof AuthenticatedClienteIndexRoute
   '/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -186,6 +226,11 @@ export interface FileRoutesByTo {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
+  '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
+  '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
+  '/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
+  '/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/cliente': typeof AuthenticatedClienteIndexRoute
   '/comercial': typeof AuthenticatedComercialIndexRoute
@@ -211,6 +256,11 @@ export interface FileRoutesById {
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/_authenticated/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
+  '/_authenticated/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
+  '/_authenticated/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
+  '/_authenticated/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
+  '/_authenticated/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/cliente/': typeof AuthenticatedClienteIndexRoute
   '/_authenticated/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -236,6 +286,11 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/financeiro/bancos'
+    | '/financeiro/centros-custo'
+    | '/financeiro/fornecedores'
+    | '/financeiro/pagar'
+    | '/financeiro/receber'
     | '/admin/'
     | '/cliente/'
     | '/comercial/'
@@ -254,6 +309,11 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/financeiro/bancos'
+    | '/financeiro/centros-custo'
+    | '/financeiro/fornecedores'
+    | '/financeiro/pagar'
+    | '/financeiro/receber'
     | '/admin'
     | '/cliente'
     | '/comercial'
@@ -278,6 +338,11 @@ export interface FileRouteTypes {
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
+    | '/_authenticated/financeiro/bancos'
+    | '/_authenticated/financeiro/centros-custo'
+    | '/_authenticated/financeiro/fornecedores'
+    | '/_authenticated/financeiro/pagar'
+    | '/_authenticated/financeiro/receber'
     | '/_authenticated/admin/'
     | '/_authenticated/cliente/'
     | '/_authenticated/comercial/'
@@ -415,6 +480,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/financeiro/receber': {
+      id: '/_authenticated/financeiro/receber'
+      path: '/receber'
+      fullPath: '/financeiro/receber'
+      preLoaderRoute: typeof AuthenticatedFinanceiroReceberRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
+    '/_authenticated/financeiro/pagar': {
+      id: '/_authenticated/financeiro/pagar'
+      path: '/pagar'
+      fullPath: '/financeiro/pagar'
+      preLoaderRoute: typeof AuthenticatedFinanceiroPagarRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
+    '/_authenticated/financeiro/fornecedores': {
+      id: '/_authenticated/financeiro/fornecedores'
+      path: '/fornecedores'
+      fullPath: '/financeiro/fornecedores'
+      preLoaderRoute: typeof AuthenticatedFinanceiroFornecedoresRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
+    '/_authenticated/financeiro/centros-custo': {
+      id: '/_authenticated/financeiro/centros-custo'
+      path: '/centros-custo'
+      fullPath: '/financeiro/centros-custo'
+      preLoaderRoute: typeof AuthenticatedFinanceiroCentrosCustoRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
+    '/_authenticated/financeiro/bancos': {
+      id: '/_authenticated/financeiro/bancos'
+      path: '/bancos'
+      fullPath: '/financeiro/bancos'
+      preLoaderRoute: typeof AuthenticatedFinanceiroBancosRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
     '/_authenticated/comercial/produtos': {
       id: '/_authenticated/comercial/produtos'
       path: '/produtos'
@@ -514,11 +614,23 @@ const AuthenticatedExpedicaoRouteWithChildren =
   )
 
 interface AuthenticatedFinanceiroRouteChildren {
+  AuthenticatedFinanceiroBancosRoute: typeof AuthenticatedFinanceiroBancosRoute
+  AuthenticatedFinanceiroCentrosCustoRoute: typeof AuthenticatedFinanceiroCentrosCustoRoute
+  AuthenticatedFinanceiroFornecedoresRoute: typeof AuthenticatedFinanceiroFornecedoresRoute
+  AuthenticatedFinanceiroPagarRoute: typeof AuthenticatedFinanceiroPagarRoute
+  AuthenticatedFinanceiroReceberRoute: typeof AuthenticatedFinanceiroReceberRoute
   AuthenticatedFinanceiroIndexRoute: typeof AuthenticatedFinanceiroIndexRoute
 }
 
 const AuthenticatedFinanceiroRouteChildren: AuthenticatedFinanceiroRouteChildren =
   {
+    AuthenticatedFinanceiroBancosRoute: AuthenticatedFinanceiroBancosRoute,
+    AuthenticatedFinanceiroCentrosCustoRoute:
+      AuthenticatedFinanceiroCentrosCustoRoute,
+    AuthenticatedFinanceiroFornecedoresRoute:
+      AuthenticatedFinanceiroFornecedoresRoute,
+    AuthenticatedFinanceiroPagarRoute: AuthenticatedFinanceiroPagarRoute,
+    AuthenticatedFinanceiroReceberRoute: AuthenticatedFinanceiroReceberRoute,
     AuthenticatedFinanceiroIndexRoute: AuthenticatedFinanceiroIndexRoute,
   }
 

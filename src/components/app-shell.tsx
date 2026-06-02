@@ -23,6 +23,11 @@ const NAV: NavItem[] = [
   { to: "/admin/audit-logs", label: "Audit Logs", icon: ShieldCheck, roles: ["admin"] },
   // Financeiro
   { to: "/financeiro", label: "Financeiro", icon: Wallet, roles: ["admin", "financeiro"] },
+  { to: "/financeiro/pagar", label: "— Contas a Pagar", icon: Banknote, roles: ["admin", "financeiro"] },
+  { to: "/financeiro/receber", label: "— Contas a Receber", icon: Banknote, roles: ["admin", "financeiro"] },
+  { to: "/financeiro/bancos", label: "— Bancos", icon: Building2, roles: ["admin", "financeiro"] },
+  { to: "/financeiro/centros-custo", label: "— Centros de Custo", icon: Wallet, roles: ["admin", "financeiro"] },
+  { to: "/financeiro/fornecedores", label: "— Fornecedores", icon: Users, roles: ["admin", "financeiro"] },
   // Comercial
   { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["admin", "comercial"] },
   { to: "/comercial/clientes", label: "— Clientes", icon: Users, roles: ["admin", "comercial"] },
