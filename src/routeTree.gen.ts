@@ -26,6 +26,9 @@ import { Route as AuthenticatedExpedicaoIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedComercialIndexRouteImport } from './routes/_authenticated.comercial.index'
 import { Route as AuthenticatedClienteIndexRouteImport } from './routes/_authenticated.cliente.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
+import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
+import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
 
@@ -117,6 +120,24 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedComercialProdutosRoute =
+  AuthenticatedComercialProdutosRouteImport.update({
+    id: '/produtos',
+    path: '/produtos',
+    getParentRoute: () => AuthenticatedComercialRoute,
+  } as any)
+const AuthenticatedComercialPedidosRoute =
+  AuthenticatedComercialPedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedComercialRoute,
+  } as any)
+const AuthenticatedComercialClientesRoute =
+  AuthenticatedComercialClientesRouteImport.update({
+    id: '/clientes',
+    path: '/clientes',
+    getParentRoute: () => AuthenticatedComercialRoute,
+  } as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
@@ -144,6 +165,9 @@ export interface FileRoutesByFullPath {
   '/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
+  '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
+  '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/cliente/': typeof AuthenticatedClienteIndexRoute
   '/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -159,6 +183,9 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
+  '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
+  '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/cliente': typeof AuthenticatedClienteIndexRoute
   '/comercial': typeof AuthenticatedComercialIndexRoute
@@ -181,6 +208,9 @@ export interface FileRoutesById {
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/_authenticated/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
+  '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
+  '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/cliente/': typeof AuthenticatedClienteIndexRoute
   '/_authenticated/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -203,6 +233,9 @@ export interface FileRouteTypes {
     | '/financeiro'
     | '/admin/audit-logs'
     | '/admin/usuarios'
+    | '/comercial/clientes'
+    | '/comercial/pedidos'
+    | '/comercial/produtos'
     | '/admin/'
     | '/cliente/'
     | '/comercial/'
@@ -218,6 +251,9 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/admin/audit-logs'
     | '/admin/usuarios'
+    | '/comercial/clientes'
+    | '/comercial/pedidos'
+    | '/comercial/produtos'
     | '/admin'
     | '/cliente'
     | '/comercial'
@@ -239,6 +275,9 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro'
     | '/_authenticated/admin/audit-logs'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/comercial/clientes'
+    | '/_authenticated/comercial/pedidos'
+    | '/_authenticated/comercial/produtos'
     | '/_authenticated/admin/'
     | '/_authenticated/cliente/'
     | '/_authenticated/comercial/'
@@ -376,6 +415,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/comercial/produtos': {
+      id: '/_authenticated/comercial/produtos'
+      path: '/produtos'
+      fullPath: '/comercial/produtos'
+      preLoaderRoute: typeof AuthenticatedComercialProdutosRouteImport
+      parentRoute: typeof AuthenticatedComercialRoute
+    }
+    '/_authenticated/comercial/pedidos': {
+      id: '/_authenticated/comercial/pedidos'
+      path: '/pedidos'
+      fullPath: '/comercial/pedidos'
+      preLoaderRoute: typeof AuthenticatedComercialPedidosRouteImport
+      parentRoute: typeof AuthenticatedComercialRoute
+    }
+    '/_authenticated/comercial/clientes': {
+      id: '/_authenticated/comercial/clientes'
+      path: '/clientes'
+      fullPath: '/comercial/clientes'
+      preLoaderRoute: typeof AuthenticatedComercialClientesRouteImport
+      parentRoute: typeof AuthenticatedComercialRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
@@ -420,11 +480,17 @@ const AuthenticatedClienteRouteWithChildren =
   AuthenticatedClienteRoute._addFileChildren(AuthenticatedClienteRouteChildren)
 
 interface AuthenticatedComercialRouteChildren {
+  AuthenticatedComercialClientesRoute: typeof AuthenticatedComercialClientesRoute
+  AuthenticatedComercialPedidosRoute: typeof AuthenticatedComercialPedidosRoute
+  AuthenticatedComercialProdutosRoute: typeof AuthenticatedComercialProdutosRoute
   AuthenticatedComercialIndexRoute: typeof AuthenticatedComercialIndexRoute
 }
 
 const AuthenticatedComercialRouteChildren: AuthenticatedComercialRouteChildren =
   {
+    AuthenticatedComercialClientesRoute: AuthenticatedComercialClientesRoute,
+    AuthenticatedComercialPedidosRoute: AuthenticatedComercialPedidosRoute,
+    AuthenticatedComercialProdutosRoute: AuthenticatedComercialProdutosRoute,
     AuthenticatedComercialIndexRoute: AuthenticatedComercialIndexRoute,
   }
 

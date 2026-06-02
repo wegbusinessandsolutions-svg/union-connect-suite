@@ -22,11 +22,14 @@ const NAV: NavItem[] = [
   { to: "/admin/usuarios", label: "Usuários", icon: Users, roles: ["admin"] },
   { to: "/admin/audit-logs", label: "Audit Logs", icon: ShieldCheck, roles: ["admin"] },
   // Financeiro
-  { to: "/financeiro", label: "Financeiro", icon: Wallet, roles: ["financeiro"] },
+  { to: "/financeiro", label: "Financeiro", icon: Wallet, roles: ["admin", "financeiro"] },
   // Comercial
-  { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["comercial"] },
+  { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["admin", "comercial"] },
+  { to: "/comercial/clientes", label: "— Clientes", icon: Users, roles: ["admin", "comercial"] },
+  { to: "/comercial/produtos", label: "— Produtos", icon: Package, roles: ["admin", "comercial"] },
+  { to: "/comercial/pedidos", label: "— Pedidos", icon: Boxes, roles: ["admin", "comercial"] },
   // Expedicao
-  { to: "/expedicao", label: "Expedição", icon: Truck, roles: ["expedicao"] },
+  { to: "/expedicao", label: "Expedição", icon: Truck, roles: ["admin", "expedicao"] },
   // Cliente
   { to: "/cliente", label: "Minha conta", icon: UserCircle, roles: ["cliente"] },
 ];
