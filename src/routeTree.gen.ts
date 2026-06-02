@@ -36,6 +36,7 @@ import { Route as AuthenticatedExpedicaoEntregasRouteImport } from './routes/_au
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
+import { Route as AuthenticatedClientePedidosRouteImport } from './routes/_authenticated.cliente.pedidos'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated.admin.relatorios'
 import { Route as AuthenticatedAdminFuncionariosRouteImport } from './routes/_authenticated.admin.funcionarios'
@@ -190,6 +191,12 @@ const AuthenticatedComercialClientesRoute =
     path: '/clientes',
     getParentRoute: () => AuthenticatedComercialRoute,
   } as any)
+const AuthenticatedClientePedidosRoute =
+  AuthenticatedClientePedidosRouteImport.update({
+    id: '/pedidos',
+    path: '/pedidos',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -266,6 +274,7 @@ export interface FileRoutesByTo {
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -301,6 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -336,6 +346,7 @@ export interface FileRouteTypes {
     | '/admin/funcionarios'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/cliente/pedidos'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/admin/funcionarios'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/cliente/pedidos'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -398,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/funcionarios'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/cliente/pedidos'
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
@@ -615,6 +628,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedComercialClientesRouteImport
       parentRoute: typeof AuthenticatedComercialRoute
     }
+    '/_authenticated/cliente/pedidos': {
+      id: '/_authenticated/cliente/pedidos'
+      path: '/pedidos'
+      fullPath: '/cliente/pedidos'
+      preLoaderRoute: typeof AuthenticatedClientePedidosRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
@@ -675,10 +695,12 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedClienteRouteChildren {
+  AuthenticatedClientePedidosRoute: typeof AuthenticatedClientePedidosRoute
   AuthenticatedClienteIndexRoute: typeof AuthenticatedClienteIndexRoute
 }
 
 const AuthenticatedClienteRouteChildren: AuthenticatedClienteRouteChildren = {
+  AuthenticatedClientePedidosRoute: AuthenticatedClientePedidosRoute,
   AuthenticatedClienteIndexRoute: AuthenticatedClienteIndexRoute,
 }
 
@@ -782,3 +804,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
