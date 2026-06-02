@@ -36,6 +36,11 @@ import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_aut
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
+import { Route as AuthenticatedFinanceiroPagarRouteImport } from './routes/_authenticated.financeiro.pagar'
+import { Route as AuthenticatedFinanceiroReceberRouteImport } from './routes/_authenticated.financeiro.receber'
+import { Route as AuthenticatedFinanceiroBancosRouteImport } from './routes/_authenticated.financeiro.bancos'
+import { Route as AuthenticatedFinanceiroCentrosCustoRouteImport } from './routes/_authenticated.financeiro.centros-custo'
+import { Route as AuthenticatedFinanceiroFornecedoresRouteImport } from './routes/_authenticated.financeiro.fornecedores'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
   id: '/unauthorized',
