@@ -32,7 +32,7 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
     return [
       `Error ID: ${errorId}`,
       `Rota: ${route}`,
-      `Hor\u00e1rio: ${new Date().toISOString()}`,
+      `Horário: ${new Date().toISOString()}`,
       `Mensagem: ${error.message}`,
       error.stack ? `Stack:\n${error.stack}` : undefined,
     ]
@@ -57,7 +57,7 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
           Algo deu errado
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Encontramos um problema ao carregar esta p\u00e1gina. Voc\u00ea pode tentar
+          Encontramos um problema ao carregar esta página. Você pode tentar
           novamente ou enviar o Error ID abaixo para o suporte.
         </p>
 
@@ -90,7 +90,7 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Ir para o in\u00edcio
+            Ir para o início
           </a>
         </div>
       </div>
