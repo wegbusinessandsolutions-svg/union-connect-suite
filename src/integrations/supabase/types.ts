@@ -79,6 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_admin_if_none: { Args: never; Returns: boolean }
       enable_audit: { Args: { _table_name: string }; Returns: undefined }
       has_role: {
         Args: {
