@@ -3,6 +3,7 @@ import { useState, type ReactNode } from "react";
 import {
   LogOut, Menu, X, ShieldCheck, Users, Banknote, Building2, Wallet,
   ShoppingCart, Boxes, Truck, Package, Wrench, UserCircle, Gift,
+  BadgeCheck, BarChart3,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,12 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   // Admin
-  { to: "/admin/usuarios", label: "Usuários", icon: Users, roles: ["admin"] },
-  { to: "/admin/audit-logs", label: "Audit Logs", icon: ShieldCheck, roles: ["admin"] },
+  { to: "/admin", label: "Admin", icon: ShieldCheck, roles: ["admin"] },
+  { to: "/admin/usuarios", label: "— Usuários", icon: Users, roles: ["admin"] },
+  { to: "/admin/funcionarios", label: "— Funcionários", icon: BadgeCheck, roles: ["admin"] },
+  { to: "/admin/empresa", label: "— Empresa", icon: Building2, roles: ["admin"] },
+  { to: "/admin/relatorios", label: "— Relatórios", icon: BarChart3, roles: ["admin"] },
+  { to: "/admin/audit-logs", label: "— Audit Logs", icon: ShieldCheck, roles: ["admin"] },
   // Financeiro
   { to: "/financeiro", label: "Financeiro", icon: Wallet, roles: ["admin", "financeiro"] },
   { to: "/financeiro/pagar", label: "— Contas a Pagar", icon: Banknote, roles: ["admin", "financeiro"] },
@@ -39,6 +44,10 @@ const NAV: NavItem[] = [
   { to: "/expedicao/estoque", label: "— Estoque", icon: Boxes, roles: ["admin", "expedicao"] },
   // Cliente
   { to: "/cliente", label: "Minha conta", icon: UserCircle, roles: ["cliente"] },
+  { to: "/cliente/pedidos", label: "— Meus pedidos", icon: ShoppingCart, roles: ["cliente"] },
+  { to: "/cliente/cashback", label: "— Meu cashback", icon: Gift, roles: ["cliente"] },
+  { to: "/cliente/catalogo", label: "— Catálogo", icon: Package, roles: ["cliente"] },
+  { to: "/cliente/dados", label: "— Meus dados", icon: UserCircle, roles: ["cliente"] },
 ];
 
 // Secondary icons used in stub pages (kept here so they're tree-shaken
