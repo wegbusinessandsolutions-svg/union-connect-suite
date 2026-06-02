@@ -31,6 +31,8 @@ import { Route as AuthenticatedFinanceiroPagarRouteImport } from './routes/_auth
 import { Route as AuthenticatedFinanceiroFornecedoresRouteImport } from './routes/_authenticated.financeiro.fornecedores'
 import { Route as AuthenticatedFinanceiroCentrosCustoRouteImport } from './routes/_authenticated.financeiro.centros-custo'
 import { Route as AuthenticatedFinanceiroBancosRouteImport } from './routes/_authenticated.financeiro.bancos'
+import { Route as AuthenticatedExpedicaoEstoqueRouteImport } from './routes/_authenticated.expedicao.estoque'
+import { Route as AuthenticatedExpedicaoEntregasRouteImport } from './routes/_authenticated.expedicao.entregas'
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
@@ -155,6 +157,18 @@ const AuthenticatedFinanceiroBancosRoute =
     path: '/bancos',
     getParentRoute: () => AuthenticatedFinanceiroRoute,
   } as any)
+const AuthenticatedExpedicaoEstoqueRoute =
+  AuthenticatedExpedicaoEstoqueRouteImport.update({
+    id: '/estoque',
+    path: '/estoque',
+    getParentRoute: () => AuthenticatedExpedicaoRoute,
+  } as any)
+const AuthenticatedExpedicaoEntregasRoute =
+  AuthenticatedExpedicaoEntregasRouteImport.update({
+    id: '/entregas',
+    path: '/entregas',
+    getParentRoute: () => AuthenticatedExpedicaoRoute,
+  } as any)
 const AuthenticatedComercialProdutosRoute =
   AuthenticatedComercialProdutosRouteImport.update({
     id: '/produtos',
@@ -203,6 +217,8 @@ export interface FileRoutesByFullPath {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/expedicao/entregas': typeof AuthenticatedExpedicaoEntregasRoute
+  '/expedicao/estoque': typeof AuthenticatedExpedicaoEstoqueRoute
   '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
@@ -226,6 +242,8 @@ export interface FileRoutesByTo {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/expedicao/entregas': typeof AuthenticatedExpedicaoEntregasRoute
+  '/expedicao/estoque': typeof AuthenticatedExpedicaoEstoqueRoute
   '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
@@ -256,6 +274,8 @@ export interface FileRoutesById {
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/_authenticated/expedicao/entregas': typeof AuthenticatedExpedicaoEntregasRoute
+  '/_authenticated/expedicao/estoque': typeof AuthenticatedExpedicaoEstoqueRoute
   '/_authenticated/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/_authenticated/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/_authenticated/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
@@ -286,6 +306,8 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/expedicao/entregas'
+    | '/expedicao/estoque'
     | '/financeiro/bancos'
     | '/financeiro/centros-custo'
     | '/financeiro/fornecedores'
@@ -309,6 +331,8 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/expedicao/entregas'
+    | '/expedicao/estoque'
     | '/financeiro/bancos'
     | '/financeiro/centros-custo'
     | '/financeiro/fornecedores'
@@ -338,6 +362,8 @@ export interface FileRouteTypes {
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
+    | '/_authenticated/expedicao/entregas'
+    | '/_authenticated/expedicao/estoque'
     | '/_authenticated/financeiro/bancos'
     | '/_authenticated/financeiro/centros-custo'
     | '/_authenticated/financeiro/fornecedores'
@@ -515,6 +541,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinanceiroBancosRouteImport
       parentRoute: typeof AuthenticatedFinanceiroRoute
     }
+    '/_authenticated/expedicao/estoque': {
+      id: '/_authenticated/expedicao/estoque'
+      path: '/estoque'
+      fullPath: '/expedicao/estoque'
+      preLoaderRoute: typeof AuthenticatedExpedicaoEstoqueRouteImport
+      parentRoute: typeof AuthenticatedExpedicaoRoute
+    }
+    '/_authenticated/expedicao/entregas': {
+      id: '/_authenticated/expedicao/entregas'
+      path: '/entregas'
+      fullPath: '/expedicao/entregas'
+      preLoaderRoute: typeof AuthenticatedExpedicaoEntregasRouteImport
+      parentRoute: typeof AuthenticatedExpedicaoRoute
+    }
     '/_authenticated/comercial/produtos': {
       id: '/_authenticated/comercial/produtos'
       path: '/produtos'
@@ -600,11 +640,15 @@ const AuthenticatedComercialRouteWithChildren =
   )
 
 interface AuthenticatedExpedicaoRouteChildren {
+  AuthenticatedExpedicaoEntregasRoute: typeof AuthenticatedExpedicaoEntregasRoute
+  AuthenticatedExpedicaoEstoqueRoute: typeof AuthenticatedExpedicaoEstoqueRoute
   AuthenticatedExpedicaoIndexRoute: typeof AuthenticatedExpedicaoIndexRoute
 }
 
 const AuthenticatedExpedicaoRouteChildren: AuthenticatedExpedicaoRouteChildren =
   {
+    AuthenticatedExpedicaoEntregasRoute: AuthenticatedExpedicaoEntregasRoute,
+    AuthenticatedExpedicaoEstoqueRoute: AuthenticatedExpedicaoEstoqueRoute,
     AuthenticatedExpedicaoIndexRoute: AuthenticatedExpedicaoIndexRoute,
   }
 

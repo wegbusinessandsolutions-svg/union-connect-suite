@@ -35,6 +35,8 @@ const NAV: NavItem[] = [
   { to: "/comercial/pedidos", label: "— Pedidos", icon: Boxes, roles: ["admin", "comercial"] },
   // Expedicao
   { to: "/expedicao", label: "Expedição", icon: Truck, roles: ["admin", "expedicao"] },
+  { to: "/expedicao/entregas", label: "— Entregas", icon: Truck, roles: ["admin", "expedicao"] },
+  { to: "/expedicao/estoque", label: "— Estoque", icon: Boxes, roles: ["admin", "expedicao"] },
   // Cliente
   { to: "/cliente", label: "Minha conta", icon: UserCircle, roles: ["cliente"] },
 ];
