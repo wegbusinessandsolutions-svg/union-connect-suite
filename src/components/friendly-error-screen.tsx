@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { logErrorToService } from "@/lib/error-logger";
-
-// Configure via env: VITE_SUPPORT_EMAIL (Workspace Settings → Build Secrets).
-const SUPPORT_EMAIL = import.meta.env.VITE_SUPPORT_EMAIL ?? "suporte@exemplo.com";
+import { buildSupportMailto } from "@/lib/support-template";
 
 type Props = {
   error: Error;
