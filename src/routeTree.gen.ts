@@ -37,6 +37,7 @@ import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_au
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
+import { Route as AuthenticatedAdminEmpresaRouteImport } from './routes/_authenticated.admin.empresa'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -193,6 +194,12 @@ const AuthenticatedAdminUsuariosRoute =
     path: '/usuarios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminEmpresaRoute =
+  AuthenticatedAdminEmpresaRouteImport.update({
+    id: '/empresa',
+    path: '/empresa',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAuditLogsRoute =
   AuthenticatedAdminAuditLogsRouteImport.update({
     id: '/audit-logs',
@@ -213,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
@@ -238,6 +246,7 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
@@ -270,6 +279,7 @@ export interface FileRoutesById {
   '/_authenticated/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/_authenticated/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/_authenticated/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
@@ -302,6 +312,7 @@ export interface FileRouteTypes {
     | '/expedicao'
     | '/financeiro'
     | '/admin/audit-logs'
+    | '/admin/empresa'
     | '/admin/usuarios'
     | '/comercial/clientes'
     | '/comercial/pedidos'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/dashboard'
     | '/admin/audit-logs'
+    | '/admin/empresa'
     | '/admin/usuarios'
     | '/comercial/clientes'
     | '/comercial/pedidos'
@@ -358,6 +370,7 @@ export interface FileRouteTypes {
     | '/_authenticated/expedicao'
     | '/_authenticated/financeiro'
     | '/_authenticated/admin/audit-logs'
+    | '/_authenticated/admin/empresa'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
@@ -583,6 +596,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/empresa': {
+      id: '/_authenticated/admin/empresa'
+      path: '/empresa'
+      fullPath: '/admin/empresa'
+      preLoaderRoute: typeof AuthenticatedAdminEmpresaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/audit-logs': {
       id: '/_authenticated/admin/audit-logs'
       path: '/audit-logs'
@@ -595,12 +615,14 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAuditLogsRoute: typeof AuthenticatedAdminAuditLogsRoute
+  AuthenticatedAdminEmpresaRoute: typeof AuthenticatedAdminEmpresaRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAuditLogsRoute: AuthenticatedAdminAuditLogsRoute,
+  AuthenticatedAdminEmpresaRoute: AuthenticatedAdminEmpresaRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -716,3 +738,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
