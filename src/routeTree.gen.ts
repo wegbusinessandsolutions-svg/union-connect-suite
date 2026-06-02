@@ -38,6 +38,7 @@ import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_aut
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedClientePedidosRouteImport } from './routes/_authenticated.cliente.pedidos'
 import { Route as AuthenticatedClienteDadosRouteImport } from './routes/_authenticated.cliente.dados'
+import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_authenticated.cliente.catalogo'
 import { Route as AuthenticatedClienteCashbackRouteImport } from './routes/_authenticated.cliente.cashback'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated.admin.relatorios'
@@ -205,6 +206,12 @@ const AuthenticatedClienteDadosRoute =
     path: '/dados',
     getParentRoute: () => AuthenticatedClienteRoute,
   } as any)
+const AuthenticatedClienteCatalogoRoute =
+  AuthenticatedClienteCatalogoRouteImport.update({
+    id: '/catalogo',
+    path: '/catalogo',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
 const AuthenticatedClienteCashbackRoute =
   AuthenticatedClienteCashbackRouteImport.update({
     id: '/cashback',
@@ -260,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -291,6 +299,7 @@ export interface FileRoutesByTo {
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -329,6 +338,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
+  '/_authenticated/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/_authenticated/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/_authenticated/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -367,6 +377,7 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
+    | '/cliente/catalogo'
     | '/cliente/dados'
     | '/cliente/pedidos'
     | '/comercial/clientes'
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
+    | '/cliente/catalogo'
     | '/cliente/dados'
     | '/cliente/pedidos'
     | '/comercial/clientes'
@@ -435,6 +447,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/cliente/cashback'
+    | '/_authenticated/cliente/catalogo'
     | '/_authenticated/cliente/dados'
     | '/_authenticated/cliente/pedidos'
     | '/_authenticated/comercial/clientes'
@@ -668,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClienteDadosRouteImport
       parentRoute: typeof AuthenticatedClienteRoute
     }
+    '/_authenticated/cliente/catalogo': {
+      id: '/_authenticated/cliente/catalogo'
+      path: '/catalogo'
+      fullPath: '/cliente/catalogo'
+      preLoaderRoute: typeof AuthenticatedClienteCatalogoRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
     '/_authenticated/cliente/cashback': {
       id: '/_authenticated/cliente/cashback'
       path: '/cashback'
@@ -736,6 +756,7 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedClienteRouteChildren {
   AuthenticatedClienteCashbackRoute: typeof AuthenticatedClienteCashbackRoute
+  AuthenticatedClienteCatalogoRoute: typeof AuthenticatedClienteCatalogoRoute
   AuthenticatedClienteDadosRoute: typeof AuthenticatedClienteDadosRoute
   AuthenticatedClientePedidosRoute: typeof AuthenticatedClientePedidosRoute
   AuthenticatedClienteIndexRoute: typeof AuthenticatedClienteIndexRoute
@@ -743,6 +764,7 @@ interface AuthenticatedClienteRouteChildren {
 
 const AuthenticatedClienteRouteChildren: AuthenticatedClienteRouteChildren = {
   AuthenticatedClienteCashbackRoute: AuthenticatedClienteCashbackRoute,
+  AuthenticatedClienteCatalogoRoute: AuthenticatedClienteCatalogoRoute,
   AuthenticatedClienteDadosRoute: AuthenticatedClienteDadosRoute,
   AuthenticatedClientePedidosRoute: AuthenticatedClientePedidosRoute,
   AuthenticatedClienteIndexRoute: AuthenticatedClienteIndexRoute,
