@@ -3,7 +3,6 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
-  useRouter,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -11,7 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { logErrorToService } from "../lib/error-logger";
+import { FriendlyErrorScreen } from "@/components/friendly-error-screen";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
