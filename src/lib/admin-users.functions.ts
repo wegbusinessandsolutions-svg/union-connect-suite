@@ -16,35 +16,99 @@ async function assertAdmin(userId: string) {
   if (!data) throw new Error("Forbidden: admin role required");
 }
 
+const listInputSchema = z.object({
+  page: z.number().int().min(1).max(10000).default(1),
+  perPage: z.number().int().min(5).max(100).default(25),
+  search: z.string().trim().max(255).default(""),
+});
+
 export const listUsersWithRoles = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d) => listInputSchema.parse(d ?? {}))
+  .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
 
-    const { data: usersData, error: usersError } =
-      await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    if (usersError) throw new Error(usersError.message);
+    const { page, perPage, search } = data;
 
-    const { data: rolesData, error: rolesError } = await supabaseAdmin
-      .from("user_roles")
-      .select("user_id, role");
-    if (rolesError) throw new Error(rolesError.message);
+    // When searching, fetch a wider window once and filter in memory.
+    // Without search, page directly through the Auth admin API.
+    let pageUsers: Array<{
+      id: string;
+      email: string | null;
+      created_at: string;
+      last_sign_in_at: string | null;
+    }> = [];
+    let total = 0;
+    let hasMore = false;
 
-    const rolesByUser = new Map<string, string[]>();
-    for (const r of rolesData ?? []) {
-      const arr = rolesByUser.get(r.user_id) ?? [];
-      arr.push(r.role);
-      rolesByUser.set(r.user_id, arr);
+    if (search) {
+      const term = search.toLowerCase();
+      const SCAN_PAGE = 1000;
+      let scanPage = 1;
+      const matched: typeof pageUsers = [];
+      // Hard cap scan to avoid runaway loops on very large user bases.
+      while (scanPage <= 10) {
+        const { data: usersData, error } =
+          await supabaseAdmin.auth.admin.listUsers({ page: scanPage, perPage: SCAN_PAGE });
+        if (error) throw new Error(error.message);
+        const batch = usersData.users;
+        for (const u of batch) {
+          if ((u.email ?? "").toLowerCase().includes(term) || u.id.includes(term)) {
+            matched.push({
+              id: u.id,
+              email: u.email ?? null,
+              created_at: u.created_at,
+              last_sign_in_at: u.last_sign_in_at ?? null,
+            });
+          }
+        }
+        if (batch.length < SCAN_PAGE) break;
+        scanPage++;
+      }
+      total = matched.length;
+      const start = (page - 1) * perPage;
+      pageUsers = matched.slice(start, start + perPage);
+      hasMore = start + perPage < total;
+    } else {
+      const { data: usersData, error } =
+        await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+      if (error) throw new Error(error.message);
+      pageUsers = usersData.users.map((u) => ({
+        id: u.id,
+        email: u.email ?? null,
+        created_at: u.created_at,
+        last_sign_in_at: u.last_sign_in_at ?? null,
+      }));
+      total = usersData.total ?? -1;
+      hasMore = total >= 0
+        ? page * perPage < total
+        : pageUsers.length === perPage;
     }
 
-    return usersData.users.map((u) => ({
-      id: u.id,
-      email: u.email ?? null,
-      created_at: u.created_at,
-      last_sign_in_at: u.last_sign_in_at ?? null,
-      roles: rolesByUser.get(u.id) ?? [],
-    }));
+    const ids = pageUsers.map((u) => u.id);
+    let rolesByUser = new Map<string, string[]>();
+    if (ids.length > 0) {
+      const { data: rolesData, error: rolesError } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id, role")
+        .in("user_id", ids);
+      if (rolesError) throw new Error(rolesError.message);
+      for (const r of rolesData ?? []) {
+        const arr = rolesByUser.get(r.user_id) ?? [];
+        arr.push(r.role);
+        rolesByUser.set(r.user_id, arr);
+      }
+    }
+
+    return {
+      users: pageUsers.map((u) => ({ ...u, roles: rolesByUser.get(u.id) ?? [] })),
+      page,
+      perPage,
+      total,
+      hasMore,
+    };
   });
+
 
 const roleSchema = z.object({
   userId: z.string().uuid(),
