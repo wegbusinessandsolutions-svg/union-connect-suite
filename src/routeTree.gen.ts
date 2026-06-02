@@ -28,6 +28,7 @@ import { Route as AuthenticatedClienteIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
 import { Route as AuthenticatedFinanceiroFornecedoresRouteImport } from './routes/_authenticated.financeiro.fornecedores'
 import { Route as AuthenticatedFinanceiroCentrosCustoRouteImport } from './routes/_authenticated.financeiro.centros-custo'
+import { Route as AuthenticatedFinanceiroBancosRouteImport } from './routes/_authenticated.financeiro.bancos'
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
@@ -134,6 +135,12 @@ const AuthenticatedFinanceiroCentrosCustoRoute =
     path: '/centros-custo',
     getParentRoute: () => AuthenticatedFinanceiroRoute,
   } as any)
+const AuthenticatedFinanceiroBancosRoute =
+  AuthenticatedFinanceiroBancosRouteImport.update({
+    id: '/bancos',
+    path: '/bancos',
+    getParentRoute: () => AuthenticatedFinanceiroRoute,
+  } as any)
 const AuthenticatedComercialProdutosRoute =
   AuthenticatedComercialProdutosRouteImport.update({
     id: '/produtos',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -202,6 +210,7 @@ export interface FileRoutesByTo {
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -229,6 +238,7 @@ export interface FileRoutesById {
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
+  '/_authenticated/financeiro/bancos': typeof AuthenticatedFinanceiroBancosRoute
   '/_authenticated/financeiro/centros-custo': typeof AuthenticatedFinanceiroCentrosCustoRoute
   '/_authenticated/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/financeiro/bancos'
     | '/financeiro/centros-custo'
     | '/financeiro/fornecedores'
     | '/admin/'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
+    | '/financeiro/bancos'
     | '/financeiro/centros-custo'
     | '/financeiro/fornecedores'
     | '/admin'
@@ -302,6 +314,7 @@ export interface FileRouteTypes {
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
+    | '/_authenticated/financeiro/bancos'
     | '/_authenticated/financeiro/centros-custo'
     | '/_authenticated/financeiro/fornecedores'
     | '/_authenticated/admin/'
@@ -455,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFinanceiroCentrosCustoRouteImport
       parentRoute: typeof AuthenticatedFinanceiroRoute
     }
+    '/_authenticated/financeiro/bancos': {
+      id: '/_authenticated/financeiro/bancos'
+      path: '/bancos'
+      fullPath: '/financeiro/bancos'
+      preLoaderRoute: typeof AuthenticatedFinanceiroBancosRouteImport
+      parentRoute: typeof AuthenticatedFinanceiroRoute
+    }
     '/_authenticated/comercial/produtos': {
       id: '/_authenticated/comercial/produtos'
       path: '/produtos'
@@ -554,6 +574,7 @@ const AuthenticatedExpedicaoRouteWithChildren =
   )
 
 interface AuthenticatedFinanceiroRouteChildren {
+  AuthenticatedFinanceiroBancosRoute: typeof AuthenticatedFinanceiroBancosRoute
   AuthenticatedFinanceiroCentrosCustoRoute: typeof AuthenticatedFinanceiroCentrosCustoRoute
   AuthenticatedFinanceiroFornecedoresRoute: typeof AuthenticatedFinanceiroFornecedoresRoute
   AuthenticatedFinanceiroIndexRoute: typeof AuthenticatedFinanceiroIndexRoute
@@ -561,6 +582,7 @@ interface AuthenticatedFinanceiroRouteChildren {
 
 const AuthenticatedFinanceiroRouteChildren: AuthenticatedFinanceiroRouteChildren =
   {
+    AuthenticatedFinanceiroBancosRoute: AuthenticatedFinanceiroBancosRoute,
     AuthenticatedFinanceiroCentrosCustoRoute:
       AuthenticatedFinanceiroCentrosCustoRoute,
     AuthenticatedFinanceiroFornecedoresRoute:
