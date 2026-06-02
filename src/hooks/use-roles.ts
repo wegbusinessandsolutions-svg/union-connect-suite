@@ -10,6 +10,10 @@ export const ROLE_LABELS: Record<AppRole, string> = {
   comercial: "Comercial",
   expedicao: "Expedição",
   cliente: "Cliente",
+  // Papéis legados ainda existentes no enum
+  vendedor: "Vendedor",
+  estoque: "Estoque",
+  entregador: "Entregador",
 };
 
 export function useRoles() {
