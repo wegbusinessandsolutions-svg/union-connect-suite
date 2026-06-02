@@ -1,0 +1,60 @@
+import { z } from "zod";
+
+const optStr = (max = 200) => z.string().trim().max(max).optional().or(z.literal(""));
+
+export const companySchema = z.object({
+  razao_social: z.string().trim().min(2, "Razão social obrigatória").max(200),
+  nome_fantasia: optStr(200),
+  cnpj: optStr(20),
+  ie: optStr(30),
+  im: optStr(30),
+  logo_url: z.string().trim().url("URL inválida").optional().or(z.literal("")),
+  address_zip: optStr(10),
+  address_street: optStr(200),
+  address_number: optStr(20),
+  address_complement: optStr(100),
+  address_district: optStr(100),
+  address_city: optStr(100),
+  address_state: optStr(2),
+  phone: optStr(30),
+  email: z.string().trim().email("Email inválido").max(255).optional().or(z.literal("")),
+  site: optStr(255),
+  regime_tributario: optStr(50),
+  certificado_digital_url: optStr(500),
+  responsavel_nome: optStr(150),
+  responsavel_cpf: optStr(20),
+  cashback_pct_padrao: z.coerce.number().min(0).max(100).default(0),
+});
+export type CompanyForm = z.infer<typeof companySchema>;
+
+export const employeeSchema = z.object({
+  name: z.string().trim().min(2, "Nome obrigatório").max(150),
+  cpf: optStr(20),
+  rg: optStr(20),
+  pis: optStr(30),
+  birth_date: optStr(20),
+  photo_url: z.string().trim().url("URL inválida").optional().or(z.literal("")),
+  email: z.string().trim().email("Email inválido").max(255).optional().or(z.literal("")),
+  phone: optStr(30),
+  role: optStr(100),
+  department: optStr(100),
+  contract_type: z.enum(["clt", "pj", "estagio", "temporario", "autonomo"]).optional(),
+  hired_at: optStr(20),
+  fired_at: optStr(20),
+  salary: z.coerce.number().min(0).optional(),
+  work_start: optStr(10),
+  work_end: optStr(10),
+  break_min: z.coerce.number().int().min(0).optional(),
+  bank_name: optStr(100),
+  bank_agency: optStr(30),
+  bank_account: optStr(30),
+  address_zip: optStr(10),
+  address_street: optStr(200),
+  address_number: optStr(20),
+  address_complement: optStr(100),
+  address_district: optStr(100),
+  address_city: optStr(100),
+  address_state: optStr(2),
+  is_active: z.boolean().default(true),
+});
+export type EmployeeForm = z.infer<typeof employeeSchema>;
