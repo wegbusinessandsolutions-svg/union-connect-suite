@@ -49,14 +49,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "União Condominial - Produtos de Limpeza e Conservação" },
+      { name: "description", content: "Atendemos as cidades de Goiânia, Aparecida de Goiânia, Senador Canedo e Trindade." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "União Condominial - Produtos de Limpeza e Conservação" },
+      { property: "og:description", content: "Atendemos as cidades de Goiânia, Aparecida de Goiânia, Senador Canedo e Trindade." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "União Condominial - Produtos de Limpeza e Conservação" },
+      { name: "twitter:description", content: "Atendemos as cidades de Goiânia, Aparecida de Goiânia, Senador Canedo e Trindade." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/8c08f6c5-3ccf-4769-9694-a7a64abf0ac0" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/8c08f6c5-3ccf-4769-9694-a7a64abf0ac0" },
     ],
     links: [
       {
