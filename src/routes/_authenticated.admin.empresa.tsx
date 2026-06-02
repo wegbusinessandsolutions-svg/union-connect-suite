@@ -30,7 +30,7 @@ function EmpresaPage() {
     },
   });
 
-  const form = useForm<CompanyForm>({
+  const form = useForm({
     resolver: zodResolver(companySchema),
     defaultValues: { razao_social: "", cashback_pct_padrao: 0 } as CompanyForm,
   });
