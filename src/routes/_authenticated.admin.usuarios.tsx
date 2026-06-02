@@ -102,9 +102,13 @@ function UsuariosPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const countLabel = total >= 0
-    ? `${total} usuário(s)`
-    : `${users.length} usuário(s) nesta página`;
+  const rangeStart = users.length === 0 ? 0 : (page - 1) * perPage + 1;
+  const rangeEnd = (page - 1) * perPage + users.length;
+  const countLabel = users.length === 0
+    ? "Nenhum usuário"
+    : total >= 0
+      ? `${rangeStart}–${rangeEnd} de ${total} usuário(s)`
+      : `${rangeStart}–${rangeEnd} (página ${page})`;
 
   return (
     <div className="bg-background p-6">
