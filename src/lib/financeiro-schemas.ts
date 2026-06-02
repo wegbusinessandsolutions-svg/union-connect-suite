@@ -60,7 +60,7 @@ const financialBase = {
   installments: z.coerce.number().int().min(1).max(60).default(1),
   paid_value: z.coerce.number().min(0).optional(),
   paid_at: z.string().optional().or(z.literal("")),
-  status: z.enum(["aberto", "pago", "atrasado", "cancelado", "parcial"]).default("aberto"),
+  status: z.enum(["aberto", "pago", "vencido", "cancelado", "parcial"]).default("aberto"),
   bank_account_id: z.string().uuid().optional().or(z.literal("")),
   cost_center_id: z.string().uuid().optional().or(z.literal("")),
 };

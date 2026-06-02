@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_authenticated/financeiro/pagar")({
 const STATUS_BADGE: Record<string, string> = {
   aberto: "bg-slate-200 text-slate-800",
   pago: "bg-emerald-100 text-emerald-900",
-  atrasado: "bg-rose-100 text-rose-900",
+  vencido: "bg-rose-100 text-rose-900",
   cancelado: "bg-gray-200 text-gray-700",
   parcial: "bg-amber-100 text-amber-900",
 };
@@ -84,7 +84,7 @@ function PagarPage() {
   const supplierMap = useMemo(() => new Map((suppliers.data ?? []).map((s) => [s.id, s.razao_social])), [suppliers.data]);
 
   const totals = useMemo(() => {
-    const open = (list.data ?? []).filter((p) => p.status === "aberto" || p.status === "atrasado").reduce((s, p) => s + Number(p.total), 0);
+    const open = (list.data ?? []).filter((p) => p.status === "aberto" || p.status === "vencido").reduce((s, p) => s + Number(p.total), 0);
     const paid = (list.data ?? []).filter((p) => p.status === "pago").reduce((s, p) => s + Number(p.paid_value ?? p.total), 0);
     return { open, paid };
   }, [list.data]);
@@ -149,7 +149,7 @@ function PagarPage() {
                 <SelectContent>
                   <SelectItem value="all">Todos status</SelectItem>
                   <SelectItem value="aberto">Aberto</SelectItem>
-                  <SelectItem value="atrasado">Atrasado</SelectItem>
+                  <SelectItem value="vencido">Vencido</SelectItem>
                   <SelectItem value="parcial">Parcial</SelectItem>
                   <SelectItem value="pago">Pago</SelectItem>
                   <SelectItem value="cancelado">Cancelado</SelectItem>
@@ -323,7 +323,7 @@ function PayableFormDialog({
                   <SelectItem value="aberto">Aberto</SelectItem>
                   <SelectItem value="parcial">Parcial</SelectItem>
                   <SelectItem value="pago">Pago</SelectItem>
-                  <SelectItem value="atrasado">Atrasado</SelectItem>
+                  <SelectItem value="vencido">Vencido</SelectItem>
                   <SelectItem value="cancelado">Cancelado</SelectItem>
                 </SelectContent>
               </Select>
