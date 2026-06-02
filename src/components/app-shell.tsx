@@ -25,6 +25,9 @@ const NAV: NavItem[] = [
   { to: "/financeiro", label: "Financeiro", icon: Wallet, roles: ["financeiro"] },
   // Comercial
   { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["comercial"] },
+  { to: "/comercial/clientes", label: "— Clientes", icon: Users, roles: ["comercial"] },
+  { to: "/comercial/produtos", label: "— Produtos", icon: Package, roles: ["comercial"] },
+  { to: "/comercial/pedidos", label: "— Pedidos", icon: Boxes, roles: ["comercial"] },
   // Expedicao
   { to: "/expedicao", label: "Expedição", icon: Truck, roles: ["expedicao"] },
   // Cliente
