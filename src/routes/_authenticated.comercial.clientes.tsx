@@ -236,7 +236,7 @@ function ClientFormDialog({
 }) {
   const isEdit = !!client;
   const form = useForm<ClientForm>({
-    resolver: zodResolver(clientSchema),
+    resolver: zodResolver(clientSchema) as never,
     defaultValues: client
       ? {
           type: client.type as "pf" | "pj",
