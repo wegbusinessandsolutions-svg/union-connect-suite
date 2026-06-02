@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "@tanstack/react-router";
 import { logErrorToService } from "@/lib/error-logger";
 
+// Altere para o e-mail do seu time de suporte.
+const SUPPORT_EMAIL = "suporte@exemplo.com";
+
 type Props = {
   error: Error;
   reset?: () => void;
@@ -49,6 +52,12 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
       setCopied(false);
     }
   };
+  const supportHref = useMemo(() => {
+    const subject = `Erro na aplicação — ${errorId}`;
+    const body = `Olá, encontrei um erro na aplicação.\n\n${details}\n\nDescreva o que estava fazendo quando o erro ocorreu:\n`;
+    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }, [details, errorId]);
+
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -86,6 +95,12 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
           >
             {copied ? "Copiado!" : "Copiar detalhes"}
           </button>
+          <a
+            href={supportHref}
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Falar com o suporte
+          </a>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
