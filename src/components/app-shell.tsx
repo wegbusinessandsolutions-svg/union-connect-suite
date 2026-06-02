@@ -82,7 +82,10 @@ export function AppShell({ email, roles, children }: Props) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={async () => { await supabase.auth.signOut(); }}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate({ to: "/login", replace: true });
+              }}
             >
               <LogOut className="mr-2 h-4 w-4" /> Sair
             </Button>
