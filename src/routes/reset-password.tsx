@@ -51,7 +51,7 @@ function ResetPasswordPage() {
       return;
     }
     toast.success("Senha atualizada", { description: "Você já está logado." });
-    navigate({ to: "/admin/audit-logs", replace: true });
+    navigate({ to: "/dashboard", replace: true });
   });
 
   return (
