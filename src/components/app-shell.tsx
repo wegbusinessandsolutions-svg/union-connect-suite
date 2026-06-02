@@ -46,6 +46,7 @@ interface Props {
 export function AppShell({ email, roles, children }: Props) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const items = NAV.filter((n) => n.roles.some((r) => roles.includes(r)));
 
   return (
