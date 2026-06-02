@@ -44,13 +44,22 @@ export function renderErrorPage(errorId: string): string {
       (function () {
         var btn = document.getElementById('copy-btn');
         var status = document.getElementById('copy-status');
-        btn.addEventListener('click', function () {
-          var details = [
+        var supportBtn = document.getElementById('support-btn');
+        var buildDetails = function () {
+          return [
             'Error ID: ${safeId}',
             'Rota: ' + location.pathname + location.search,
             'Horário: ' + new Date().toISOString(),
             'User-Agent: ' + navigator.userAgent,
           ].join('\\n');
+        };
+        if (supportBtn) {
+          var subject = 'Erro na aplicação — ${safeId}';
+          var body = 'Olá, encontrei um erro na aplicação.\\n\\n' + buildDetails() + '\\n\\nDescreva o que estava fazendo quando o erro ocorreu:\\n';
+          supportBtn.href = 'mailto:${SUPPORT_EMAIL}?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        }
+        btn.addEventListener('click', function () {
+          var details = buildDetails();
           var done = function () {
             status.textContent = 'Copiado!';
             setTimeout(function () { status.textContent = ''; }, 2000);
