@@ -67,12 +67,12 @@ function EmpresaPage() {
     mutationFn: async (values: CompanyForm) => {
       const payload = Object.fromEntries(
         Object.entries(values).map(([k, v]) => [k, v === "" ? null : v]),
-      );
+      ) as never;
       if (company.data?.id) {
         const { error } = await supabase.from("company").update(payload).eq("id", company.data.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("company").insert(payload as never);
+        const { error } = await supabase.from("company").insert(payload);
         if (error) throw error;
       }
     },
