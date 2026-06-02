@@ -35,6 +35,7 @@ export function renderErrorPage(errorId: string): string {
       <div class="actions">
         <button class="primary" onclick="location.reload()">Tentar novamente</button>
         <button class="secondary" id="copy-btn">Copiar detalhes</button>
+        <a class="btn secondary" id="support-btn" href="mailto:${SUPPORT_EMAIL}">Falar com o suporte</a>
         <a class="btn secondary" href="/">Ir para o início</a>
       </div>
       <div class="copied" id="copy-status"></div>
