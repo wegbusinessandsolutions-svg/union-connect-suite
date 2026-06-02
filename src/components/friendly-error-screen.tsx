@@ -51,10 +51,19 @@ export function FriendlyErrorScreen({ error, reset, source }: Props) {
     }
   };
   const supportHref = useMemo(() => {
-    const subject = `Erro na aplicação — ${errorId}`;
-    const body = `Olá, encontrei um erro na aplicação.\n\n${details}\n\nDescreva o que estava fazendo quando o erro ocorreu:\n`;
-    return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }, [details, errorId]);
+    const route =
+      typeof window !== "undefined"
+        ? window.location.pathname + window.location.search
+        : "";
+    return buildSupportMailto({
+      errorId,
+      route,
+      timestamp: new Date().toISOString(),
+      message: error.message,
+      stack: error.stack,
+      userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+    });
+  }, [error, errorId]);
 
 
   return (
