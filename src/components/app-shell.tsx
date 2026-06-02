@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LogOut, Menu, X, ShieldCheck, Users, Banknote, Building2, Wallet,
@@ -46,6 +46,7 @@ interface Props {
 export function AppShell({ email, roles, children }: Props) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const items = NAV.filter((n) => n.roles.some((r) => roles.includes(r)));
 
   return (
@@ -81,7 +82,10 @@ export function AppShell({ email, roles, children }: Props) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={async () => { await supabase.auth.signOut(); }}
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate({ to: "/login", replace: true });
+              }}
             >
               <LogOut className="mr-2 h-4 w-4" /> Sair
             </Button>
