@@ -149,21 +149,6 @@ const AuthenticatedFinanceiroCentrosCustoRoute =
     path: '/centros-custo',
     getParentRoute: () => AuthenticatedFinanceiroRoute,
   } as any)
-const AuthenticatedFinanceiroPagarRoute = AuthenticatedFinanceiroPagarRouteImport.update({
-  id: '/pagar', path: '/pagar', getParentRoute: () => AuthenticatedFinanceiroRoute,
-} as any)
-const AuthenticatedFinanceiroReceberRoute = AuthenticatedFinanceiroReceberRouteImport.update({
-  id: '/receber', path: '/receber', getParentRoute: () => AuthenticatedFinanceiroRoute,
-} as any)
-const AuthenticatedFinanceiroBancosRoute = AuthenticatedFinanceiroBancosRouteImport.update({
-  id: '/bancos', path: '/bancos', getParentRoute: () => AuthenticatedFinanceiroRoute,
-} as any)
-const AuthenticatedFinanceiroCentrosCustoRoute = AuthenticatedFinanceiroCentrosCustoRouteImport.update({
-  id: '/centros-custo', path: '/centros-custo', getParentRoute: () => AuthenticatedFinanceiroRoute,
-} as any)
-const AuthenticatedFinanceiroFornecedoresRoute = AuthenticatedFinanceiroFornecedoresRouteImport.update({
-  id: '/fornecedores', path: '/fornecedores', getParentRoute: () => AuthenticatedFinanceiroRoute,
-} as any)
 const AuthenticatedFinanceiroBancosRoute =
   AuthenticatedFinanceiroBancosRouteImport.update({
     id: '/bancos',
