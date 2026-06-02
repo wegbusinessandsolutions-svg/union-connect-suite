@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { format } from "date-fns";
-import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2 } from "lucide-react";
+import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,10 +36,24 @@ const ROLE_BADGE: Record<Role, string> = {
   cliente: "bg-gray-100 text-gray-800 hover:bg-gray-100",
 };
 
+const PER_PAGE_OPTIONS = [10, 25, 50, 100];
+
 function UsuariosPage() {
   const qc = useQueryClient();
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(25);
   const [roleByUser, setRoleByUser] = useState<Record<string, Role>>({});
+
+  // Debounce search input → committed search (resets to page 1).
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
 
   const fetchUsers = useServerFn(listUsersWithRoles);
   const grant = useServerFn(grantRole);
@@ -59,10 +73,16 @@ function UsuariosPage() {
   const isAdmin = (meRoles.data ?? []).includes("admin");
 
   const usersQuery = useQuery({
-    queryKey: ["admin-users"],
+    queryKey: ["admin-users", { page, perPage, search }],
     enabled: isAdmin,
-    queryFn: () => fetchUsers(),
+    placeholderData: keepPreviousData,
+    queryFn: () => fetchUsers({ data: { page, perPage, search } }),
   });
+
+  const result = usersQuery.data;
+  const users = result?.users ?? [];
+  const hasMore = result?.hasMore ?? false;
+  const total = result?.total ?? -1;
 
   const grantMut = useMutation({
     mutationFn: (vars: { userId: string; role: Role }) => grant({ data: vars }),
@@ -82,12 +102,9 @@ function UsuariosPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const users = (usersQuery.data ?? []).filter((u) =>
-    !search.trim()
-      ? true
-      : (u.email ?? "").toLowerCase().includes(search.toLowerCase()) ||
-        u.id.includes(search),
-  );
+  const countLabel = total >= 0
+    ? `${total} usuário(s)`
+    : `${users.length} usuário(s) nesta página`;
 
   return (
     <div className="bg-background p-6">
@@ -116,16 +133,29 @@ function UsuariosPage() {
 
         {isAdmin && (
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between gap-4">
+            <CardHeader className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <CardTitle className="text-base">
-                {usersQuery.isFetching ? "Carregando…" : `${users.length} usuário(s)`}
+                {usersQuery.isFetching ? "Carregando…" : countLabel}
               </CardTitle>
-              <Input
-                placeholder="Buscar por email ou UUID…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="max-w-sm"
-              />
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por email ou UUID…"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="w-72 pl-8"
+                  />
+                </div>
+                <Select value={String(perPage)} onValueChange={(v) => { setPerPage(Number(v)); setPage(1); }}>
+                  <SelectTrigger className="h-9 w-[110px]"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {PER_PAGE_OPTIONS.map((n) => (
+                      <SelectItem key={n} value={String(n)}>{n} / pág.</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent className="overflow-x-auto p-0">
               <Table>
@@ -234,6 +264,30 @@ function UsuariosPage() {
                 </TableBody>
               </Table>
             </CardContent>
+            <div className="flex items-center justify-between border-t p-3">
+              <div className="text-xs text-muted-foreground">
+                Página {page}
+                {total >= 0 && ` de ${Math.max(1, Math.ceil(total / perPage))}`}
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={page <= 1 || usersQuery.isFetching}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                >
+                  <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!hasMore || usersQuery.isFetching}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  Próxima <ChevronRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </Card>
         )}
       </div>
