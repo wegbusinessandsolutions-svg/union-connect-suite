@@ -278,7 +278,7 @@ function ClientFormDialog({
     }
     try {
       if (isEdit) {
-        const { error } = await supabase.from("clients").update(payload).eq("id", client!.id);
+        const { error } = await supabase.from("clients").update(payload as never).eq("id", client!.id);
         if (error) throw error;
         toast.success("Cliente atualizado");
       } else {
