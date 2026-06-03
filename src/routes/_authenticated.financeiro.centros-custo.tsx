@@ -196,10 +196,11 @@ function CostCenterFormDialog({
             <Select value={form.watch("category")} onValueChange={(v) => form.setValue("category", v as CostCenterForm["category"])}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="receita">Receita</SelectItem>
-                <SelectItem value="despesa">Despesa</SelectItem>
-                <SelectItem value="investimento">Investimento</SelectItem>
-                <SelectItem value="transferencia">Transferência</SelectItem>
+                <SelectItem value="fixo">Fixo</SelectItem>
+                <SelectItem value="variavel">Variável</SelectItem>
+                <SelectItem value="imobilizado">Imobilizado</SelectItem>
+                <SelectItem value="bancario">Bancário</SelectItem>
+                <SelectItem value="pessoal">Pessoal</SelectItem>
               </SelectContent>
             </Select>
           </Field>
