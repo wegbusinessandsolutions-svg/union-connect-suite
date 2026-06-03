@@ -36,6 +36,7 @@ const NAV: NavItem[] = [
   // Comercial
   { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["admin", "comercial"] },
   { to: "/comercial/clientes", label: "— Clientes", icon: Users, roles: ["admin", "comercial"] },
+  { to: "/comercial/categorias", label: "— Categorias", icon: FolderTree, roles: ["admin", "comercial"] },
   { to: "/comercial/produtos", label: "— Produtos", icon: Package, roles: ["admin", "comercial"] },
   { to: "/comercial/pedidos", label: "— Pedidos", icon: Boxes, roles: ["admin", "comercial"] },
   // Expedicao
