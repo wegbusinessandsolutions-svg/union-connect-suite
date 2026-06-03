@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Package, Upload, X, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -23,10 +23,41 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
 
+const BUCKET = "product-images";
+const MAX_GALLERY = 3;
+
 export const Route = createFileRoute("/_authenticated/comercial/produtos")({
   head: () => ({ meta: [{ title: "Produtos — Comercial" }] }),
   component: ProdutosPage,
 });
+
+async function signPath(path: string | null | undefined): Promise<string | null> {
+  if (!path) return null;
+  // backward-compat: if it's already an http URL, just return it
+  if (/^https?:\/\//i.test(path)) return path;
+  const { data } = await supabase.storage.from(BUCKET).createSignedUrl(path, 3600);
+  return data?.signedUrl ?? null;
+}
+
+function useSignedThumbnails(paths: (string | null | undefined)[]) {
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const key = paths.filter(Boolean).join("|");
+  useEffect(() => {
+    const clean = paths.filter((p): p is string => !!p && !/^https?:\/\//i.test(p));
+    if (clean.length === 0) { setUrls({}); return; }
+    let cancel = false;
+    (async () => {
+      const { data } = await supabase.storage.from(BUCKET).createSignedUrls(clean, 3600);
+      if (cancel || !data) return;
+      const map: Record<string, string> = {};
+      data.forEach((d) => { if (d.path && d.signedUrl) map[d.path] = d.signedUrl; });
+      setUrls(map);
+    })();
+    return () => { cancel = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+  return urls;
+}
 
 function ProdutosPage() {
   const qc = useQueryClient();
@@ -56,9 +87,16 @@ function ProdutosPage() {
     },
   });
 
+  const thumbs = useSignedThumbnails((list.data ?? []).map((p) => p.image_main_url));
+
   const delMut = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("products").delete().eq("id", id);
+    mutationFn: async (p: Product) => {
+      const paths: string[] = [];
+      if (p.image_main_url && !/^https?:\/\//i.test(p.image_main_url)) paths.push(p.image_main_url);
+      const gallery = Array.isArray(p.images) ? (p.images as unknown[]).filter((x): x is string => typeof x === "string" && !/^https?:\/\//i.test(x)) : [];
+      paths.push(...gallery);
+      if (paths.length) await supabase.storage.from(BUCKET).remove(paths).catch(() => {});
+      const { error } = await supabase.from("products").delete().eq("id", p.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -128,12 +166,15 @@ function ProdutosPage() {
                 )}
                 {list.data?.map((p) => {
                   const lowStock = p.stock_min != null && p.stock_qty <= p.stock_min;
+                  const thumb = p.image_main_url
+                    ? (/^https?:\/\//i.test(p.image_main_url) ? p.image_main_url : thumbs[p.image_main_url])
+                    : null;
                   return (
                     <TableRow key={p.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          {p.image_main_url ? (
-                            <img src={p.image_main_url} alt="" className="h-10 w-10 rounded object-cover" />
+                          {thumb ? (
+                            <img src={thumb} alt="" className="h-10 w-10 rounded object-cover" />
                           ) : (
                             <div className="flex h-10 w-10 items-center justify-center rounded bg-muted">
                               <Package className="h-4 w-4 text-muted-foreground" />
@@ -196,7 +237,7 @@ function ProdutosPage() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => toDelete && delMut.mutate(toDelete.id)}
+              onClick={() => toDelete && delMut.mutate(toDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Excluir
@@ -216,6 +257,12 @@ function ProductFormDialog({
   onSaved: () => void;
 }) {
   const isEdit = !!product;
+  const mainInput = useRef<HTMLInputElement>(null);
+  const galleryInput = useRef<HTMLInputElement>(null);
+  const [uploadingMain, setUploadingMain] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+  const [mainPreview, setMainPreview] = useState<string | null>(null);
+
   const categoriesQ = useQuery({
     queryKey: ["product_categories", "all"],
     queryFn: async () => {
@@ -224,6 +271,10 @@ function ProductFormDialog({
       return data as { id: string; name: string }[];
     },
   });
+
+  const initialGallery: string[] = Array.isArray(product?.images)
+    ? (product!.images as unknown[]).filter((x): x is string => typeof x === "string")
+    : [];
 
   const form = useForm<ProductForm>({
     resolver: zodResolver(productSchema) as never,
@@ -237,6 +288,7 @@ function ProductFormDialog({
           description_short: product.description_short ?? "",
           description_long: product.description_long ?? "",
           image_main_url: product.image_main_url ?? "",
+          images: initialGallery,
           unit_measure: product.unit_measure ?? "",
           weight_kg: product.weight_kg ?? undefined,
           cost_last: product.cost_last ?? undefined,
@@ -255,6 +307,8 @@ function ProductFormDialog({
       : {
           name: "",
           category_id: null,
+          image_main_url: "",
+          images: [],
           price_sale: 0,
           cashback_pct: 0,
           stock_qty: 0,
@@ -262,17 +316,95 @@ function ProductFormDialog({
         },
   });
 
+  const mainPath = form.watch("image_main_url");
+  const gallery = form.watch("images") ?? [];
+  const galleryThumbs = useSignedThumbnails(gallery);
+
+  // Sign main image
+  useEffect(() => {
+    let cancel = false;
+    (async () => {
+      const url = await signPath(mainPath || null);
+      if (!cancel) setMainPreview(url);
+    })();
+    return () => { cancel = true; };
+  }, [mainPath]);
+
+  const uploadFile = async (file: File): Promise<string> => {
+    if (file.size > 5 * 1024 * 1024) throw new Error("Imagem deve ter no máximo 5 MB");
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+      cacheControl: "3600", upsert: false, contentType: file.type,
+    });
+    if (error) throw error;
+    return path;
+  };
+
+  const handleMainUpload = async (file: File) => {
+    setUploadingMain(true);
+    try {
+      const path = await uploadFile(file);
+      const old = form.getValues("image_main_url");
+      if (old && !/^https?:\/\//i.test(old)) {
+        await supabase.storage.from(BUCKET).remove([old]).catch(() => {});
+      }
+      form.setValue("image_main_url", path);
+      toast.success("Imagem principal enviada");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploadingMain(false);
+    }
+  };
+
+  const handleGalleryUpload = async (files: FileList) => {
+    const remaining = MAX_GALLERY - gallery.length;
+    if (remaining <= 0) { toast.error(`Máximo ${MAX_GALLERY} imagens na galeria`); return; }
+    const toUpload = Array.from(files).slice(0, remaining);
+    setUploadingGallery(true);
+    try {
+      const paths: string[] = [];
+      for (const f of toUpload) {
+        paths.push(await uploadFile(f));
+      }
+      form.setValue("images", [...gallery, ...paths]);
+      toast.success(`${paths.length} imagem(ns) enviada(s)`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setUploadingGallery(false);
+    }
+  };
+
+  const removeGalleryAt = async (idx: number) => {
+    const path = gallery[idx];
+    if (path && !/^https?:\/\//i.test(path)) {
+      await supabase.storage.from(BUCKET).remove([path]).catch(() => {});
+    }
+    form.setValue("images", gallery.filter((_, i) => i !== idx));
+  };
+
+  const removeMain = async () => {
+    const old = form.getValues("image_main_url");
+    if (old && !/^https?:\/\//i.test(old)) {
+      await supabase.storage.from(BUCKET).remove([old]).catch(() => {});
+    }
+    form.setValue("image_main_url", "");
+  };
+
   const submit = form.handleSubmit(async (values) => {
     const payload: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(values)) {
+      if (k === "images") { payload[k] = v ?? []; continue; }
       payload[k] = v === "" || v === undefined ? null : v;
     }
-    // Ensure required NOT NULL fields aren't nullified.
     payload.name = values.name;
     payload.price_sale = values.price_sale;
     payload.stock_qty = values.stock_qty;
     payload.is_active = values.is_active;
     payload.cashback_pct = values.cashback_pct ?? 0;
+    payload.images = values.images ?? [];
 
     try {
       if (isEdit) {
@@ -370,23 +502,99 @@ function ProductFormDialog({
               </div>
             </TabsContent>
 
-            <TabsContent value="media" className="space-y-3 pt-3">
-              <Field label="URL imagem principal" error={form.formState.errors.image_main_url?.message}>
-                <Input placeholder="https://…" {...form.register("image_main_url")} />
-              </Field>
-              {form.watch("image_main_url") && (
-                <img
-                  src={form.watch("image_main_url") || ""}
-                  alt="preview"
-                  className="h-40 w-40 rounded border object-cover"
+            <TabsContent value="media" className="space-y-4 pt-3">
+              <div className="space-y-2">
+                <Label className="text-xs">Imagem principal</Label>
+                <div className="flex items-center gap-3">
+                  {mainPreview ? (
+                    <img src={mainPreview} alt="principal" className="h-28 w-28 rounded border object-cover" />
+                  ) : (
+                    <div className="flex h-28 w-28 items-center justify-center rounded border bg-muted">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={mainInput}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handleMainUpload(f);
+                        e.target.value = "";
+                      }}
+                    />
+                    <Button type="button" variant="outline" size="sm" onClick={() => mainInput.current?.click()} disabled={uploadingMain}>
+                      {uploadingMain ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+                      {mainPath ? "Trocar" : "Enviar"}
+                    </Button>
+                    {mainPath && (
+                      <Button type="button" variant="ghost" size="sm" onClick={removeMain}>Remover</Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs">Galeria (até {MAX_GALLERY} imagens)</Label>
+                  <span className="text-xs text-muted-foreground">{gallery.length}/{MAX_GALLERY}</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {gallery.map((path, idx) => {
+                    const url = /^https?:\/\//i.test(path) ? path : galleryThumbs[path];
+                    return (
+                      <div key={path + idx} className="relative">
+                        {url ? (
+                          <img src={url} alt={`img ${idx + 1}`} className="h-28 w-full rounded border object-cover" />
+                        ) : (
+                          <div className="flex h-28 w-full items-center justify-center rounded border bg-muted">
+                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryAt(idx)}
+                          className="absolute right-1 top-1 rounded-full bg-destructive p-1 text-destructive-foreground shadow"
+                          aria-label="Remover"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                  {gallery.length < MAX_GALLERY && (
+                    <button
+                      type="button"
+                      onClick={() => galleryInput.current?.click()}
+                      className="flex h-28 w-full flex-col items-center justify-center gap-1 rounded border border-dashed text-xs text-muted-foreground hover:bg-muted"
+                      disabled={uploadingGallery}
+                    >
+                      {uploadingGallery ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                      Adicionar
+                    </button>
+                  )}
+                </div>
+                <input
+                  ref={galleryInput}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) handleGalleryUpload(e.target.files);
+                    e.target.value = "";
+                  }}
                 />
-              )}
+                <p className="text-xs text-muted-foreground">JPG, PNG ou WebP até 5 MB cada.</p>
+              </div>
             </TabsContent>
           </Tabs>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button type="submit" disabled={form.formState.isSubmitting || uploadingMain || uploadingGallery}>
               {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isEdit ? "Salvar" : "Criar"}
             </Button>
