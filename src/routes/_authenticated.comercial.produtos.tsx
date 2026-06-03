@@ -216,11 +216,21 @@ function ProductFormDialog({
   onSaved: () => void;
 }) {
   const isEdit = !!product;
+  const categoriesQ = useQuery({
+    queryKey: ["product_categories", "all"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("product_categories").select("id,name").order("name");
+      if (error) throw error;
+      return data as { id: string; name: string }[];
+    },
+  });
+
   const form = useForm<ProductForm>({
     resolver: zodResolver(productSchema) as never,
     defaultValues: product
       ? {
           name: product.name,
+          category_id: product.category_id ?? null,
           sku: product.sku ?? "",
           ean: product.ean ?? "",
           brand: product.brand ?? "",
@@ -244,6 +254,7 @@ function ProductFormDialog({
         }
       : {
           name: "",
+          category_id: null,
           price_sale: 0,
           cashback_pct: 0,
           stock_qty: 0,
