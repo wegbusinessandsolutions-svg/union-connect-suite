@@ -35,7 +35,7 @@ export type SupplierForm = z.infer<typeof supplierSchema>;
 
 export const costCenterSchema = z.object({
   name: z.string().trim().min(2, "Nome obrigatório").max(150),
-  category: z.enum(["receita", "despesa", "investimento", "transferencia"]),
+  category: z.enum(["fixo", "variavel", "imobilizado", "bancario", "pessoal"]),
   parent_id: z.string().uuid().optional().or(z.literal("")),
   is_active: z.boolean().default(true),
 });

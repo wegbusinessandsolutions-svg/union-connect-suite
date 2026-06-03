@@ -27,10 +27,11 @@ export const Route = createFileRoute("/_authenticated/financeiro/centros-custo")
 });
 
 const CATEGORY_BADGE: Record<string, string> = {
-  receita: "bg-emerald-100 text-emerald-900",
-  despesa: "bg-rose-100 text-rose-900",
-  investimento: "bg-blue-100 text-blue-900",
-  transferencia: "bg-slate-200 text-slate-800",
+  fixo: "bg-rose-100 text-rose-900",
+  variavel: "bg-amber-100 text-amber-900",
+  imobilizado: "bg-blue-100 text-blue-900",
+  bancario: "bg-slate-200 text-slate-800",
+  pessoal: "bg-emerald-100 text-emerald-900",
 };
 
 function CostCentersPage() {
@@ -164,7 +165,7 @@ function CostCenterFormDialog({
       category: item.category as CostCenterForm["category"],
       parent_id: item.parent_id ?? "",
       is_active: item.is_active,
-    } : { name: "", category: "despesa", parent_id: "", is_active: true },
+    } : { name: "", category: "fixo", parent_id: "", is_active: true },
   });
 
   const submit = form.handleSubmit(async (values) => {
@@ -195,10 +196,11 @@ function CostCenterFormDialog({
             <Select value={form.watch("category")} onValueChange={(v) => form.setValue("category", v as CostCenterForm["category"])}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="receita">Receita</SelectItem>
-                <SelectItem value="despesa">Despesa</SelectItem>
-                <SelectItem value="investimento">Investimento</SelectItem>
-                <SelectItem value="transferencia">Transferência</SelectItem>
+                <SelectItem value="fixo">Fixo</SelectItem>
+                <SelectItem value="variavel">Variável</SelectItem>
+                <SelectItem value="imobilizado">Imobilizado</SelectItem>
+                <SelectItem value="bancario">Bancário</SelectItem>
+                <SelectItem value="pessoal">Pessoal</SelectItem>
               </SelectContent>
             </Select>
           </Field>
