@@ -30,6 +30,7 @@ export type ClientForm = z.infer<typeof clientSchema>;
 // ---------- Products ----------
 export const productSchema = z.object({
   name: z.string().trim().min(2, "Nome obrigatório").max(200),
+  category_id: z.string().uuid().nullable().optional(),
   sku: z.string().trim().max(50).optional().or(z.literal("")),
   ean: z.string().trim().max(20).optional().or(z.literal("")),
   brand: z.string().trim().max(100).optional().or(z.literal("")),

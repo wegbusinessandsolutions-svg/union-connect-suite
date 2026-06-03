@@ -36,6 +36,7 @@ import { Route as AuthenticatedExpedicaoEntregasRouteImport } from './routes/_au
 import { Route as AuthenticatedComercialProdutosRouteImport } from './routes/_authenticated.comercial.produtos'
 import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_authenticated.comercial.pedidos'
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
+import { Route as AuthenticatedComercialCategoriasRouteImport } from './routes/_authenticated.comercial.categorias'
 import { Route as AuthenticatedClientePedidosRouteImport } from './routes/_authenticated.cliente.pedidos'
 import { Route as AuthenticatedClienteDadosRouteImport } from './routes/_authenticated.cliente.dados'
 import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_authenticated.cliente.catalogo'
@@ -194,6 +195,12 @@ const AuthenticatedComercialClientesRoute =
     path: '/clientes',
     getParentRoute: () => AuthenticatedComercialRoute,
   } as any)
+const AuthenticatedComercialCategoriasRoute =
+  AuthenticatedComercialCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
+    getParentRoute: () => AuthenticatedComercialRoute,
+  } as any)
 const AuthenticatedClientePedidosRoute =
   AuthenticatedClientePedidosRouteImport.update({
     id: '/pedidos',
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
+  '/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -302,6 +310,7 @@ export interface FileRoutesByTo {
   '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
+  '/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -341,6 +350,7 @@ export interface FileRoutesById {
   '/_authenticated/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/_authenticated/cliente/dados': typeof AuthenticatedClienteDadosRoute
   '/_authenticated/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
+  '/_authenticated/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
   '/_authenticated/comercial/pedidos': typeof AuthenticatedComercialPedidosRoute
   '/_authenticated/comercial/produtos': typeof AuthenticatedComercialProdutosRoute
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/cliente/catalogo'
     | '/cliente/dados'
     | '/cliente/pedidos'
+    | '/comercial/categorias'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/cliente/catalogo'
     | '/cliente/dados'
     | '/cliente/pedidos'
+    | '/comercial/categorias'
     | '/comercial/clientes'
     | '/comercial/pedidos'
     | '/comercial/produtos'
@@ -450,6 +462,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cliente/catalogo'
     | '/_authenticated/cliente/dados'
     | '/_authenticated/cliente/pedidos'
+    | '/_authenticated/comercial/categorias'
     | '/_authenticated/comercial/clientes'
     | '/_authenticated/comercial/pedidos'
     | '/_authenticated/comercial/produtos'
@@ -667,6 +680,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedComercialClientesRouteImport
       parentRoute: typeof AuthenticatedComercialRoute
     }
+    '/_authenticated/comercial/categorias': {
+      id: '/_authenticated/comercial/categorias'
+      path: '/categorias'
+      fullPath: '/comercial/categorias'
+      preLoaderRoute: typeof AuthenticatedComercialCategoriasRouteImport
+      parentRoute: typeof AuthenticatedComercialRoute
+    }
     '/_authenticated/cliente/pedidos': {
       id: '/_authenticated/cliente/pedidos'
       path: '/pedidos'
@@ -774,6 +794,7 @@ const AuthenticatedClienteRouteWithChildren =
   AuthenticatedClienteRoute._addFileChildren(AuthenticatedClienteRouteChildren)
 
 interface AuthenticatedComercialRouteChildren {
+  AuthenticatedComercialCategoriasRoute: typeof AuthenticatedComercialCategoriasRoute
   AuthenticatedComercialClientesRoute: typeof AuthenticatedComercialClientesRoute
   AuthenticatedComercialPedidosRoute: typeof AuthenticatedComercialPedidosRoute
   AuthenticatedComercialProdutosRoute: typeof AuthenticatedComercialProdutosRoute
@@ -782,6 +803,8 @@ interface AuthenticatedComercialRouteChildren {
 
 const AuthenticatedComercialRouteChildren: AuthenticatedComercialRouteChildren =
   {
+    AuthenticatedComercialCategoriasRoute:
+      AuthenticatedComercialCategoriasRoute,
     AuthenticatedComercialClientesRoute: AuthenticatedComercialClientesRoute,
     AuthenticatedComercialPedidosRoute: AuthenticatedComercialPedidosRoute,
     AuthenticatedComercialProdutosRoute: AuthenticatedComercialProdutosRoute,
