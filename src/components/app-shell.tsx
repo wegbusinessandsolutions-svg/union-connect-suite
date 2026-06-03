@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import {
   LogOut, Menu, X, ShieldCheck, Users, Banknote, Building2, Wallet,
   ShoppingCart, Boxes, Truck, Package, Wrench, UserCircle, Gift,
-  BadgeCheck, BarChart3,
+  BadgeCheck, BarChart3, FolderTree,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
