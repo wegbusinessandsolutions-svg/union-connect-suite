@@ -165,7 +165,7 @@ function CostCenterFormDialog({
       category: item.category as CostCenterForm["category"],
       parent_id: item.parent_id ?? "",
       is_active: item.is_active,
-    } : { name: "", category: "despesa", parent_id: "", is_active: true },
+    } : { name: "", category: "fixo", parent_id: "", is_active: true },
   });
 
   const submit = form.handleSubmit(async (values) => {
