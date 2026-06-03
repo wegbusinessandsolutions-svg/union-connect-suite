@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { productSchema, type ProductForm } from "@/lib/comercial-schemas";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -215,11 +216,21 @@ function ProductFormDialog({
   onSaved: () => void;
 }) {
   const isEdit = !!product;
+  const categoriesQ = useQuery({
+    queryKey: ["product_categories", "all"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("product_categories").select("id,name").order("name");
+      if (error) throw error;
+      return data as { id: string; name: string }[];
+    },
+  });
+
   const form = useForm<ProductForm>({
     resolver: zodResolver(productSchema) as never,
     defaultValues: product
       ? {
           name: product.name,
+          category_id: product.category_id ?? null,
           sku: product.sku ?? "",
           ean: product.ean ?? "",
           brand: product.brand ?? "",
@@ -243,6 +254,7 @@ function ProductFormDialog({
         }
       : {
           name: "",
+          category_id: null,
           price_sale: 0,
           cashback_pct: 0,
           stock_qty: 0,
@@ -303,6 +315,20 @@ function ProductFormDialog({
                 <Field label="EAN"><Input {...form.register("ean")} /></Field>
                 <Field label="Marca"><Input {...form.register("brand")} /></Field>
               </div>
+              <Field label="Categoria">
+                <Select
+                  value={form.watch("category_id") ?? "none"}
+                  onValueChange={(v) => form.setValue("category_id", v === "none" ? null : v)}
+                >
+                  <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— Nenhuma —</SelectItem>
+                    {categoriesQ.data?.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <Field label="Descrição curta">
                 <Input {...form.register("description_short")} />
               </Field>

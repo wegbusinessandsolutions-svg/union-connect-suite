@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import {
   LogOut, Menu, X, ShieldCheck, Users, Banknote, Building2, Wallet,
   ShoppingCart, Boxes, Truck, Package, Wrench, UserCircle, Gift,
-  BadgeCheck, BarChart3,
+  BadgeCheck, BarChart3, FolderTree,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ const NAV: NavItem[] = [
   // Comercial
   { to: "/comercial", label: "Comercial", icon: ShoppingCart, roles: ["admin", "comercial"] },
   { to: "/comercial/clientes", label: "— Clientes", icon: Users, roles: ["admin", "comercial"] },
+  { to: "/comercial/categorias", label: "— Categorias", icon: FolderTree, roles: ["admin", "comercial"] },
   { to: "/comercial/produtos", label: "— Produtos", icon: Package, roles: ["admin", "comercial"] },
   { to: "/comercial/pedidos", label: "— Pedidos", icon: Boxes, roles: ["admin", "comercial"] },
   // Expedicao
