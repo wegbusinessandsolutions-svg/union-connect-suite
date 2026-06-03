@@ -315,6 +315,20 @@ function ProductFormDialog({
                 <Field label="EAN"><Input {...form.register("ean")} /></Field>
                 <Field label="Marca"><Input {...form.register("brand")} /></Field>
               </div>
+              <Field label="Categoria">
+                <Select
+                  value={form.watch("category_id") ?? "none"}
+                  onValueChange={(v) => form.setValue("category_id", v === "none" ? null : v)}
+                >
+                  <SelectTrigger><SelectValue placeholder="Selecione…" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">— Nenhuma —</SelectItem>
+                    {categoriesQ.data?.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
               <Field label="Descrição curta">
                 <Input {...form.register("description_short")} />
               </Field>
