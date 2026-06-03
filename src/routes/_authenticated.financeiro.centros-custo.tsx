@@ -27,10 +27,11 @@ export const Route = createFileRoute("/_authenticated/financeiro/centros-custo")
 });
 
 const CATEGORY_BADGE: Record<string, string> = {
-  receita: "bg-emerald-100 text-emerald-900",
-  despesa: "bg-rose-100 text-rose-900",
-  investimento: "bg-blue-100 text-blue-900",
-  transferencia: "bg-slate-200 text-slate-800",
+  fixo: "bg-rose-100 text-rose-900",
+  variavel: "bg-amber-100 text-amber-900",
+  imobilizado: "bg-blue-100 text-blue-900",
+  bancario: "bg-slate-200 text-slate-800",
+  pessoal: "bg-emerald-100 text-emerald-900",
 };
 
 function CostCentersPage() {
