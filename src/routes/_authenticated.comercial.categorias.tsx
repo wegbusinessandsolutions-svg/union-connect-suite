@@ -118,7 +118,7 @@ function CategoriasPage() {
                   <TableHead className="w-[80px]">Imagem</TableHead>
                   <TableHead>Nome</TableHead>
                   <TableHead>Categoria pai</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +147,7 @@ function CategoriasPage() {
                     <TableCell className="text-sm text-muted-foreground">{parentName(c.parent_id)}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={categoryReport(c)} filename={`categoria-${c.name}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

@@ -108,7 +108,7 @@ function FornecedoresPage() {
                   <TableHead>Prazo médio</TableHead>
                   <TableHead>Rating</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +147,7 @@ function FornecedoresPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={supplierReport(s)} filename={`fornecedor-${s.cnpj ?? s.id.slice(0, 8)}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(s)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

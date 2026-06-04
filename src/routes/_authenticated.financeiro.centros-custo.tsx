@@ -94,7 +94,7 @@ function CostCentersPage() {
                   <TableHead>Categoria</TableHead>
                   <TableHead>Pai</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -111,6 +111,7 @@ function CostCentersPage() {
                     <TableCell>{c.is_active ? <Badge variant="secondary">Ativo</Badge> : <Badge variant="outline">Inativo</Badge>}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={costCenterReport(c)} filename={`centro-${c.name}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(c)}><Pencil className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" onClick={() => setToDelete(c)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       </div>

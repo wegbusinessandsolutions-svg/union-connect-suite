@@ -103,7 +103,7 @@ function BankAccountsPage() {
                   <TableHead>Saldo inicial</TableHead>
                   <TableHead>Saldo atual</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -123,6 +123,7 @@ function BankAccountsPage() {
                       <TableCell>{a.is_active ? <Badge variant="secondary">Ativa</Badge> : <Badge variant="outline">Inativa</Badge>}</TableCell>
                       <TableCell>
                         <div className="flex gap-1">
+                          <ReportActions data={bankAccountReport(a, bank?.name)} filename={`conta-${a.id.slice(0, 8)}`} />
                           <Button size="icon" variant="ghost" onClick={() => setEditing(a)}><Pencil className="h-4 w-4" /></Button>
                           <Button size="icon" variant="ghost" onClick={() => setToDelete(a)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                         </div>

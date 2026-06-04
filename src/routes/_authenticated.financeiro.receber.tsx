@@ -167,7 +167,7 @@ function ReceberPage() {
                   <TableHead>Parc.</TableHead>
                   <TableHead>Recebido em</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[140px]">Ações</TableHead>
+                  <TableHead className="w-[200px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -185,6 +185,7 @@ function ReceberPage() {
                     <TableCell><Badge className={STATUS_BADGE[r.status] ?? ""}>{r.status}</Badge></TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={receivableReport(r)} filename={`receber-${r.id.slice(0, 8)}`} />
                         {r.status !== "pago" && r.status !== "cancelado" && (
                           <Button size="icon" variant="ghost" title="Receber" onClick={() => receiveMut.mutate(r)}>
                             <CheckCircle2 className="h-4 w-4 text-emerald-600" />

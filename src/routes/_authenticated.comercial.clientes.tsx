@@ -124,7 +124,7 @@ function ClientesPage() {
                   <TableHead>Cashback</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Criado</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -171,6 +171,7 @@ function ClientesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={clientReport(c)} filename={`cliente-${c.cpf_cnpj ?? c.id.slice(0, 8)}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

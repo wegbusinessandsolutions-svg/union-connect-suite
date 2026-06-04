@@ -102,8 +102,11 @@ function FuncionariosPage() {
                     <TableCell className="text-xs">{e.hired_at ?? "—"}</TableCell>
                     <TableCell>{e.is_active ? <Badge variant="secondary">Ativo</Badge> : <Badge variant="outline">Inativo</Badge>}</TableCell>
                     <TableCell className="text-right">
-                      <Button size="icon" variant="ghost" onClick={() => setEditing(e)}><Pencil className="h-4 w-4" /></Button>
-                      <Button size="icon" variant="ghost" onClick={() => setToDelete(e)}><Trash2 className="h-4 w-4" /></Button>
+                      <div className="inline-flex gap-1">
+                        <ReportActions data={employeeReport(e)} filename={`funcionario-${e.cpf ?? e.id.slice(0, 8)}`} />
+                        <Button size="icon" variant="ghost" onClick={() => setEditing(e)}><Pencil className="h-4 w-4" /></Button>
+                        <Button size="icon" variant="ghost" onClick={() => setToDelete(e)}><Trash2 className="h-4 w-4" /></Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
