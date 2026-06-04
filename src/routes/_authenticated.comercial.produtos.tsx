@@ -19,6 +19,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { productSchema, type ProductForm } from "@/lib/comercial-schemas";
+import { ReportActions } from "@/components/report-actions";
+import { productReport } from "@/lib/report-builders";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -150,7 +152,7 @@ function ProdutosPage() {
                   <TableHead>Estoque</TableHead>
                   <TableHead>Cashback</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -197,6 +199,7 @@ function ProdutosPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
+                          <ReportActions data={productReport(p)} filename={`produto-${p.sku ?? p.id.slice(0, 8)}`} />
                           <Button size="icon" variant="ghost" onClick={() => setEditing(p)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -303,6 +306,32 @@ function ProductFormDialog({
           stock_min: product.stock_min ?? undefined,
           stock_location: product.stock_location ?? "",
           is_active: product.is_active,
+          ncm: product.ncm ?? "",
+          cest: product.cest ?? "",
+          cfop: product.cfop ?? "",
+          origem: product.origem ?? "",
+          unidade_tributavel: product.unidade_tributavel ?? "",
+          ean_tributavel: product.ean_tributavel ?? "",
+          fator_conversao_tributavel: product.fator_conversao_tributavel ?? undefined,
+          cst_icms: product.cst_icms ?? "",
+          csosn: product.csosn ?? "",
+          aliquota_icms: product.aliquota_icms ?? undefined,
+          aliquota_icms_st: product.aliquota_icms_st ?? undefined,
+          cst_ipi: product.cst_ipi ?? "",
+          aliquota_ipi: product.aliquota_ipi ?? undefined,
+          cst_pis: product.cst_pis ?? "",
+          aliquota_pis: product.aliquota_pis ?? undefined,
+          cst_cofins: product.cst_cofins ?? "",
+          aliquota_cofins: product.aliquota_cofins ?? undefined,
+          codigo_beneficio_fiscal: product.codigo_beneficio_fiscal ?? "",
+          peso_bruto_kg: product.peso_bruto_kg ?? undefined,
+          peso_liquido_kg: product.peso_liquido_kg ?? undefined,
+          valor_aproximado_tributos: product.valor_aproximado_tributos ?? undefined,
+          codigo_anp: product.codigo_anp ?? "",
+          escala_relevante: product.escala_relevante ?? "",
+          cnpj_fabricante: product.cnpj_fabricante ?? "",
+          gtin_embalagem: product.gtin_embalagem ?? "",
+          informacoes_adicionais: product.informacoes_adicionais ?? "",
         }
       : {
           name: "",
@@ -431,11 +460,12 @@ function ProductFormDialog({
 
         <form onSubmit={submit} className="space-y-4">
           <Tabs defaultValue="basic">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic">Básico</TabsTrigger>
               <TabsTrigger value="prices">Preços</TabsTrigger>
               <TabsTrigger value="stock">Estoque</TabsTrigger>
               <TabsTrigger value="media">Mídia</TabsTrigger>
+              <TabsTrigger value="fiscal">Fiscal</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-3 pt-3">
@@ -589,6 +619,61 @@ function ProductFormDialog({
                 />
                 <p className="text-xs text-muted-foreground">JPG, PNG ou WebP até 5 MB cada.</p>
               </div>
+            </TabsContent>
+
+            <TabsContent value="fiscal" className="space-y-3 pt-3">
+              <p className="text-xs text-muted-foreground">
+                Campos para emissão de NF-e conforme layout SEFAZ-GO.
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="NCM"><Input maxLength={10} placeholder="00000000" {...form.register("ncm")} /></Field>
+                <Field label="CEST"><Input maxLength={10} placeholder="0000000" {...form.register("cest")} /></Field>
+                <Field label="CFOP"><Input maxLength={10} placeholder="5102" {...form.register("cfop")} /></Field>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Origem (0-8)"><Input maxLength={2} {...form.register("origem")} /></Field>
+                <Field label="Unidade tributável"><Input maxLength={10} {...form.register("unidade_tributavel")} /></Field>
+                <Field label="Fator conversão tributável"><Input type="number" step="0.0001" {...form.register("fator_conversao_tributavel")} /></Field>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="EAN tributável"><Input {...form.register("ean_tributavel")} /></Field>
+                <Field label="GTIN embalagem"><Input {...form.register("gtin_embalagem")} /></Field>
+                <Field label="CNPJ fabricante"><Input {...form.register("cnpj_fabricante")} /></Field>
+              </div>
+
+              <div className="rounded border p-3">
+                <Label className="text-xs font-semibold">ICMS</Label>
+                <div className="mt-2 grid grid-cols-4 gap-3">
+                  <Field label="CST ICMS (Reg. Normal)"><Input maxLength={5} {...form.register("cst_icms")} /></Field>
+                  <Field label="CSOSN (Simples)"><Input maxLength={5} {...form.register("csosn")} /></Field>
+                  <Field label="Alíquota ICMS %"><Input type="number" step="0.01" {...form.register("aliquota_icms")} /></Field>
+                  <Field label="Alíquota ICMS-ST %"><Input type="number" step="0.01" {...form.register("aliquota_icms_st")} /></Field>
+                </div>
+              </div>
+
+              <div className="rounded border p-3">
+                <Label className="text-xs font-semibold">IPI / PIS / COFINS</Label>
+                <div className="mt-2 grid grid-cols-3 gap-3">
+                  <Field label="CST IPI"><Input maxLength={5} {...form.register("cst_ipi")} /></Field>
+                  <Field label="Alíquota IPI %"><Input type="number" step="0.01" {...form.register("aliquota_ipi")} /></Field>
+                  <Field label="Cód. Benefício Fiscal"><Input {...form.register("codigo_beneficio_fiscal")} /></Field>
+                  <Field label="CST PIS"><Input maxLength={5} {...form.register("cst_pis")} /></Field>
+                  <Field label="Alíquota PIS %"><Input type="number" step="0.01" {...form.register("aliquota_pis")} /></Field>
+                  <Field label="CST COFINS"><Input maxLength={5} {...form.register("cst_cofins")} /></Field>
+                  <Field label="Alíquota COFINS %"><Input type="number" step="0.01" {...form.register("aliquota_cofins")} /></Field>
+                  <Field label="Valor aprox. tributos R$"><Input type="number" step="0.01" {...form.register("valor_aproximado_tributos")} /></Field>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Peso bruto (kg)"><Input type="number" step="0.001" {...form.register("peso_bruto_kg")} /></Field>
+                <Field label="Peso líquido (kg)"><Input type="number" step="0.001" {...form.register("peso_liquido_kg")} /></Field>
+                <Field label="Código ANP"><Input {...form.register("codigo_anp")} /></Field>
+                <Field label="Escala relevante (S/N)"><Input maxLength={5} {...form.register("escala_relevante")} /></Field>
+              </div>
+              <Field label="Informações adicionais (NF-e)">
+                <Textarea rows={3} {...form.register("informacoes_adicionais")} />
+              </Field>
             </TabsContent>
           </Tabs>
 

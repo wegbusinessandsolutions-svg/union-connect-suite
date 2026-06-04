@@ -6,6 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, RefreshCw, Loader2, Truck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { deliveryReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -156,6 +158,7 @@ function EntregasPage() {
                       <div className="mb-1 flex items-center justify-between gap-2">
                         <span className="font-semibold">#{ord?.order_number ?? "—"}</span>
                         <div className="flex gap-1">
+                          <ReportActions data={deliveryReport(d)} filename={`entrega-${d.id.slice(0, 8)}`} />
                           <Button size="icon" variant="ghost" className="h-6 w-6" onClick={() => setEditing(d)}>
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>

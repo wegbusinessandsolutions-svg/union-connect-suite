@@ -6,6 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { bankAccountReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -103,7 +105,7 @@ function BankAccountsPage() {
                   <TableHead>Saldo inicial</TableHead>
                   <TableHead>Saldo atual</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -123,6 +125,7 @@ function BankAccountsPage() {
                       <TableCell>{a.is_active ? <Badge variant="secondary">Ativa</Badge> : <Badge variant="outline">Inativa</Badge>}</TableCell>
                       <TableCell>
                         <div className="flex gap-1">
+                          <ReportActions data={bankAccountReport(a, bank?.name)} filename={`conta-${a.id.slice(0, 8)}`} />
                           <Button size="icon" variant="ghost" onClick={() => setEditing(a)}><Pencil className="h-4 w-4" /></Button>
                           <Button size="icon" variant="ghost" onClick={() => setToDelete(a)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                         </div>

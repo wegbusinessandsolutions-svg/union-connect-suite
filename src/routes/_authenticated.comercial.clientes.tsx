@@ -7,6 +7,8 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { clientReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,7 +126,7 @@ function ClientesPage() {
                   <TableHead>Cashback</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Criado</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -171,6 +173,7 @@ function ClientesPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={clientReport(c)} filename={`cliente-${c.cpf_cnpj ?? c.id.slice(0, 8)}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

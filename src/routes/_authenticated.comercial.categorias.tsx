@@ -7,6 +7,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, FolderTree, Upload, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { categoryReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,7 +120,7 @@ function CategoriasPage() {
                   <TableHead className="w-[80px]">Imagem</TableHead>
                   <TableHead>Nome</TableHead>
                   <TableHead>Categoria pai</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +149,7 @@ function CategoriasPage() {
                     <TableCell className="text-sm text-muted-foreground">{parentName(c.parent_id)}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={categoryReport(c)} filename={`categoria-${c.name}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

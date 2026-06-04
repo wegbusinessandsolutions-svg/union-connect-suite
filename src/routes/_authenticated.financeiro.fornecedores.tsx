@@ -6,6 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { supplierReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -108,7 +110,7 @@ function FornecedoresPage() {
                   <TableHead>Prazo médio</TableHead>
                   <TableHead>Rating</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -147,6 +149,7 @@ function FornecedoresPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={supplierReport(s)} filename={`fornecedor-${s.cnpj ?? s.id.slice(0, 8)}`} />
                         <Button size="icon" variant="ghost" onClick={() => setEditing(s)}>
                           <Pencil className="h-4 w-4" />
                         </Button>

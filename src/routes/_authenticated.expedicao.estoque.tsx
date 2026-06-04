@@ -6,6 +6,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, RefreshCw, Search, Loader2, Boxes, ArrowDownCircle, ArrowUpCircle, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { productReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -147,9 +149,12 @@ function EstoquePage() {
                           </TableCell>
                           <TableCell className="text-right font-mono text-xs">{p.stock_max ?? "—"}</TableCell>
                           <TableCell>
-                            <Button size="sm" variant="outline" onClick={() => { setMovingProduct(p); setCreatingMovement(true); }}>
-                              <Settings2 className="mr-1 h-3.5 w-3.5" /> Movimentar
-                            </Button>
+                            <div className="flex gap-1">
+                              <ReportActions data={productReport(p)} filename={`produto-${p.sku ?? p.id.slice(0, 8)}`} />
+                              <Button size="sm" variant="outline" onClick={() => { setMovingProduct(p); setCreatingMovement(true); }}>
+                                <Settings2 className="mr-1 h-3.5 w-3.5" /> Movimentar
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       );

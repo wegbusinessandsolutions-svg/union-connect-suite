@@ -7,6 +7,8 @@ import { Plus, Pencil, Trash2, RefreshCw, Loader2, CheckCircle2 } from "lucide-r
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { payableReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -168,7 +170,7 @@ function PagarPage() {
                   <TableHead>Parc.</TableHead>
                   <TableHead>Pago em</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[140px]">Ações</TableHead>
+                  <TableHead className="w-[200px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -186,6 +188,7 @@ function PagarPage() {
                     <TableCell><Badge className={STATUS_BADGE[p.status] ?? ""}>{p.status}</Badge></TableCell>
                     <TableCell>
                       <div className="flex gap-1">
+                        <ReportActions data={payableReport(p)} filename={`pagar-${p.id.slice(0, 8)}`} />
                         {p.status !== "pago" && p.status !== "cancelado" && (
                           <Button size="icon" variant="ghost" title="Dar baixa" onClick={() => payMut.mutate(p)}>
                             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
