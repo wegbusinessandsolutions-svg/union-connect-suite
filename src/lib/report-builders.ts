@@ -520,7 +520,7 @@ export function bankReport(b: Tables<"banks">): ReportData {
         title: "Dados",
         fields: [
           { label: "Nome", value: b.name },
-          { label: "Código", value: b.code },
+          { label: "Código BACEN", value: b.bacen_code },
         ],
       },
     ],
@@ -558,10 +558,10 @@ export function orderReport(o: Tables<"sale_orders">, items?: Tables<"sale_order
             columns: ["Produto", "Qtd", "Preço unit.", "Desc %", "Total"],
             rows: items.map((it) => [
               it.product_id ?? it.service_id ?? "—",
-              it.qty,
-              money(it.unit_price),
+              it.qty as number,
+              money(it.unit_price as number),
               `${Number(it.discount_pct ?? 0).toFixed(2)}%`,
-              money(it.total),
+              money(it.total as number),
             ]),
           },
         ]
