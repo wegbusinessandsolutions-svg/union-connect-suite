@@ -306,6 +306,32 @@ function ProductFormDialog({
           stock_min: product.stock_min ?? undefined,
           stock_location: product.stock_location ?? "",
           is_active: product.is_active,
+          ncm: product.ncm ?? "",
+          cest: product.cest ?? "",
+          cfop: product.cfop ?? "",
+          origem: product.origem ?? "",
+          unidade_tributavel: product.unidade_tributavel ?? "",
+          ean_tributavel: product.ean_tributavel ?? "",
+          fator_conversao_tributavel: product.fator_conversao_tributavel ?? undefined,
+          cst_icms: product.cst_icms ?? "",
+          csosn: product.csosn ?? "",
+          aliquota_icms: product.aliquota_icms ?? undefined,
+          aliquota_icms_st: product.aliquota_icms_st ?? undefined,
+          cst_ipi: product.cst_ipi ?? "",
+          aliquota_ipi: product.aliquota_ipi ?? undefined,
+          cst_pis: product.cst_pis ?? "",
+          aliquota_pis: product.aliquota_pis ?? undefined,
+          cst_cofins: product.cst_cofins ?? "",
+          aliquota_cofins: product.aliquota_cofins ?? undefined,
+          codigo_beneficio_fiscal: product.codigo_beneficio_fiscal ?? "",
+          peso_bruto_kg: product.peso_bruto_kg ?? undefined,
+          peso_liquido_kg: product.peso_liquido_kg ?? undefined,
+          valor_aproximado_tributos: product.valor_aproximado_tributos ?? undefined,
+          codigo_anp: product.codigo_anp ?? "",
+          escala_relevante: product.escala_relevante ?? "",
+          cnpj_fabricante: product.cnpj_fabricante ?? "",
+          gtin_embalagem: product.gtin_embalagem ?? "",
+          informacoes_adicionais: product.informacoes_adicionais ?? "",
         }
       : {
           name: "",
@@ -434,11 +460,12 @@ function ProductFormDialog({
 
         <form onSubmit={submit} className="space-y-4">
           <Tabs defaultValue="basic">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="basic">Básico</TabsTrigger>
               <TabsTrigger value="prices">Preços</TabsTrigger>
               <TabsTrigger value="stock">Estoque</TabsTrigger>
               <TabsTrigger value="media">Mídia</TabsTrigger>
+              <TabsTrigger value="fiscal">Fiscal</TabsTrigger>
             </TabsList>
 
             <TabsContent value="basic" className="space-y-3 pt-3">
