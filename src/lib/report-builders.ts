@@ -154,7 +154,7 @@ export function categoryReport(c: Tables<"product_categories">): ReportData {
         title: "Dados",
         fields: [
           { label: "Nome", value: c.name },
-          { label: "Descrição", value: c.description },
+          { label: "Categoria pai", value: c.parent_id },
           { label: "Imagem", value: c.image_url },
           { label: "Criada em", value: datetime(c.created_at) },
         ],
@@ -165,17 +165,18 @@ export function categoryReport(c: Tables<"product_categories">): ReportData {
 
 export function supplierReport(s: Tables<"suppliers">): ReportData {
   return {
-    title: `Ficha do Fornecedor — ${s.name}`,
+    title: `Ficha do Fornecedor — ${s.razao_social}`,
     subtitle: s.cnpj ?? undefined,
     sections: [
       {
         title: "Identificação",
         fields: [
-          { label: "Razão social", value: s.name },
-          { label: "Nome fantasia", value: s.trade_name },
+          { label: "Razão social", value: s.razao_social },
+          { label: "Nome fantasia", value: s.nome_fantasia },
           { label: "CNPJ", value: s.cnpj },
           { label: "IE", value: s.ie },
           { label: "Ativo", value: yesno(s.is_active) },
+          { label: "Avaliação", value: s.rating },
         ],
       },
       {
@@ -183,7 +184,11 @@ export function supplierReport(s: Tables<"suppliers">): ReportData {
         fields: [
           { label: "E-mail", value: s.email },
           { label: "Telefone", value: s.phone },
-          { label: "Contato", value: s.contact_name },
+          { label: "WhatsApp", value: s.whatsapp },
+          { label: "Site", value: s.site },
+          { label: "Representante", value: s.rep_name },
+          { label: "Tel. representante", value: s.rep_phone },
+          { label: "E-mail representante", value: s.rep_email },
         ],
       },
       {
@@ -191,6 +196,7 @@ export function supplierReport(s: Tables<"suppliers">): ReportData {
         fields: [
           { label: "Logradouro", value: s.address_street },
           { label: "Número", value: s.address_number },
+          { label: "Complemento", value: s.address_complement },
           { label: "Bairro", value: s.address_district },
           { label: "Cidade", value: s.address_city },
           { label: "UF", value: s.address_state },
@@ -198,12 +204,15 @@ export function supplierReport(s: Tables<"suppliers">): ReportData {
         ],
       },
       {
-        title: "Bancário",
+        title: "Bancário e comercial",
         fields: [
           { label: "Banco", value: s.bank_name },
           { label: "Agência", value: s.bank_agency },
           { label: "Conta", value: s.bank_account },
-          { label: "PIX", value: s.pix_key },
+          { label: "PIX", value: s.bank_pix },
+          { label: "Prazo médio entrega (dias)", value: s.avg_delivery_days },
+          { label: "Condições de pagamento", value: s.payment_terms },
+          { label: "Observações", value: s.notes },
         ],
       },
       {
@@ -228,9 +237,8 @@ export function employeeReport(e: Tables<"employees">): ReportData {
           { label: "Nome", value: e.name },
           { label: "CPF", value: e.cpf },
           { label: "RG", value: e.rg },
+          { label: "PIS", value: e.pis },
           { label: "Data nascimento", value: date(e.birth_date) },
-          { label: "Estado civil", value: e.marital_status },
-          { label: "Sexo", value: e.gender },
         ],
       },
       {
@@ -238,7 +246,6 @@ export function employeeReport(e: Tables<"employees">): ReportData {
         fields: [
           { label: "E-mail", value: e.email },
           { label: "Telefone", value: e.phone },
-          { label: "Celular", value: e.cell_phone },
         ],
       },
       {
@@ -246,6 +253,7 @@ export function employeeReport(e: Tables<"employees">): ReportData {
         fields: [
           { label: "Logradouro", value: e.address_street },
           { label: "Número", value: e.address_number },
+          { label: "Complemento", value: e.address_complement },
           { label: "Bairro", value: e.address_district },
           { label: "Cidade", value: e.address_city },
           { label: "UF", value: e.address_state },
@@ -255,12 +263,25 @@ export function employeeReport(e: Tables<"employees">): ReportData {
       {
         title: "Vínculo",
         fields: [
-          { label: "Cargo", value: e.role_position },
+          { label: "Cargo", value: e.role },
           { label: "Departamento", value: e.department },
-          { label: "Admissão", value: date(e.admission_date) },
-          { label: "Demissão", value: date(e.termination_date) },
+          { label: "Tipo contrato", value: e.contract_type },
+          { label: "Admissão", value: date(e.hired_at) },
+          { label: "Demissão", value: date(e.fired_at) },
           { label: "Salário", value: money(e.salary) },
+          { label: "Início expediente", value: e.work_start },
+          { label: "Fim expediente", value: e.work_end },
+          { label: "Intervalo (min)", value: e.break_min },
+          { label: "Dias trabalhados", value: (e.workdays ?? []).join(", ") },
           { label: "Ativo", value: yesno(e.is_active) },
+        ],
+      },
+      {
+        title: "Bancário",
+        fields: [
+          { label: "Banco", value: e.bank_name },
+          { label: "Agência", value: e.bank_agency },
+          { label: "Conta", value: e.bank_account },
         ],
       },
       {
@@ -299,28 +320,22 @@ export function userProfileReport(u: Tables<"user_profiles">, roles?: string[]):
   };
 }
 
-export function bankAccountReport(b: Tables<"bank_accounts">): ReportData {
+export function bankAccountReport(b: Tables<"bank_accounts">, bankName?: string): ReportData {
   return {
-    title: `Conta Bancária — ${b.name}`,
+    title: `Conta Bancária — ${bankName ?? b.id.slice(0, 8)}`,
     sections: [
       {
         title: "Dados",
         fields: [
-          { label: "Nome", value: b.name },
-          { label: "Banco ID", value: b.bank_id },
+          { label: "Banco", value: bankName ?? b.bank_id },
           { label: "Agência", value: b.agency },
-          { label: "Conta", value: b.account_number },
-          { label: "Tipo", value: b.account_type },
-          { label: "Saldo inicial", value: money(b.opening_balance) },
-          { label: "Saldo atual", value: money(b.current_balance) },
+          { label: "Conta", value: b.account },
+          { label: "Tipo", value: b.type },
+          { label: "PIX", value: b.pix_key },
+          { label: "Saldo inicial", value: money(b.balance_initial) },
+          { label: "Saldo atual", value: money(b.balance_current) },
           { label: "Ativa", value: yesno(b.is_active) },
-        ],
-      },
-      {
-        title: "Auditoria",
-        fields: [
           { label: "Criada em", value: datetime(b.created_at) },
-          { label: "Atualizada em", value: datetime(b.updated_at) },
         ],
       },
     ],
@@ -335,8 +350,9 @@ export function costCenterReport(c: Tables<"cost_centers">): ReportData {
         title: "Dados",
         fields: [
           { label: "Nome", value: c.name },
-          { label: "Categoria", value: c.categoria },
-          { label: "Criado em", value: datetime(c.created_at) },
+          { label: "Categoria", value: c.category },
+          { label: "Pai", value: c.parent_id },
+          { label: "Ativo", value: yesno(c.is_active) },
         ],
       },
     ],
@@ -353,13 +369,17 @@ export function payableReport(p: Tables<"payables">): ReportData {
           { label: "Descrição", value: p.description },
           { label: "Fornecedor", value: p.supplier_id },
           { label: "Centro de custo", value: p.cost_center_id },
-          { label: "Valor", value: money(p.amount) },
-          { label: "Valor pago", value: money(p.paid_amount) },
+          { label: "Conta bancária", value: p.bank_account_id },
+          { label: "Valor total", value: money(p.total) },
+          { label: "Valor pago", value: money(p.paid_value) },
+          { label: "Parcelas", value: p.installments },
           { label: "Vencimento", value: date(p.due_date) },
-          { label: "Pagamento", value: date(p.payment_date) },
+          { label: "Pagamento", value: date(p.paid_at) },
           { label: "Status", value: p.status },
-          { label: "Forma pagamento", value: p.payment_method },
-          { label: "Observações", value: p.notes },
+          { label: "Recorrente", value: yesno(p.is_recurring) },
+          { label: "Dia recorrência", value: p.recurrence_day },
+          { label: "NF (URL)", value: p.nf_url },
+          { label: "Criado em", value: datetime(p.created_at) },
         ],
       },
     ],
@@ -375,13 +395,16 @@ export function receivableReport(r: Tables<"receivables">): ReportData {
         fields: [
           { label: "Descrição", value: r.description },
           { label: "Cliente", value: r.client_id },
-          { label: "Valor", value: money(r.amount) },
-          { label: "Valor recebido", value: money(r.received_amount) },
+          { label: "Pedido", value: r.order_id },
+          { label: "Centro de custo", value: r.cost_center_id },
+          { label: "Conta bancária", value: r.bank_account_id },
+          { label: "Valor total", value: money(r.total) },
+          { label: "Valor recebido", value: money(r.paid_value) },
+          { label: "Parcelas", value: r.installments },
           { label: "Vencimento", value: date(r.due_date) },
-          { label: "Recebimento", value: date(r.received_date) },
+          { label: "Recebimento", value: date(r.paid_at) },
           { label: "Status", value: r.status },
-          { label: "Forma pagamento", value: r.payment_method },
-          { label: "Observações", value: r.notes },
+          { label: "Criado em", value: datetime(r.created_at) },
         ],
       },
     ],
@@ -396,16 +419,19 @@ export function deliveryReport(d: Tables<"deliveries">): ReportData {
         title: "Dados",
         fields: [
           { label: "Pedido", value: d.order_id },
+          { label: "Entregador", value: d.deliverer_id },
           { label: "Status", value: d.status },
-          { label: "Entregador", value: d.driver_id },
-          { label: "Veículo", value: d.vehicle },
-          { label: "Saída", value: datetime(d.departed_at) },
-          { label: "Entrega", value: datetime(d.delivered_at) },
-          { label: "Endereço", value: d.address },
-          { label: "Cidade", value: d.city },
-          { label: "UF", value: d.state },
-          { label: "CEP", value: d.zip },
+          { label: "Saída", value: datetime(d.pickup_at) },
+          { label: "Entregue em", value: datetime(d.delivered_at) },
+          { label: "Recebedor", value: d.receiver_name },
+          { label: "Função recebedor", value: d.receiver_role },
+          { label: "Tel. recebedor", value: d.receiver_phone },
+          { label: "Foto comprovante", value: d.proof_photo_url },
+          { label: "Mapa rota", value: d.route_map_url },
+          { label: "Latitude", value: d.lat_delivery },
+          { label: "Longitude", value: d.lng_delivery },
           { label: "Observações", value: d.notes },
+          { label: "Criada em", value: datetime(d.created_at) },
         ],
       },
     ],
@@ -425,26 +451,34 @@ export function companyReport(c: Tables<"company">): ReportData {
           { label: "IE", value: c.ie },
           { label: "IM", value: c.im },
           { label: "Regime tributário", value: c.regime_tributario },
+          { label: "Cashback padrão %", value: c.cashback_pct_padrao },
         ],
       },
       {
         title: "Contato",
         fields: [
           { label: "E-mail", value: c.email },
-          { label: "Telefone", value: c.telefone },
-          { label: "WhatsApp", value: c.whatsapp },
+          { label: "Telefone", value: c.phone },
           { label: "Site", value: c.site },
         ],
       },
       {
         title: "Endereço",
         fields: [
-          { label: "Logradouro", value: c.endereco },
-          { label: "Número", value: c.numero },
-          { label: "Bairro", value: c.bairro },
-          { label: "Cidade", value: c.cidade },
-          { label: "UF", value: c.uf },
-          { label: "CEP", value: c.cep },
+          { label: "Logradouro", value: c.address_street },
+          { label: "Número", value: c.address_number },
+          { label: "Complemento", value: c.address_complement },
+          { label: "Bairro", value: c.address_district },
+          { label: "Cidade", value: c.address_city },
+          { label: "UF", value: c.address_state },
+          { label: "CEP", value: c.address_zip },
+        ],
+      },
+      {
+        title: "Responsável",
+        fields: [
+          { label: "Nome", value: c.responsavel_nome },
+          { label: "CPF", value: c.responsavel_cpf },
         ],
       },
       {
@@ -478,6 +512,21 @@ export function stockMovementReport(m: Tables<"stock_movements">): ReportData {
   };
 }
 
+export function bankReport(b: Tables<"banks">): ReportData {
+  return {
+    title: `Banco — ${b.name}`,
+    sections: [
+      {
+        title: "Dados",
+        fields: [
+          { label: "Nome", value: b.name },
+          { label: "Código", value: b.code },
+        ],
+      },
+    ],
+  };
+}
+
 export function orderReport(o: Tables<"sale_orders">, items?: Tables<"sale_order_items">[]): ReportData {
   return {
     title: `Pedido de Venda — #${o.order_number ?? o.id.slice(0, 8)}`,
@@ -491,10 +540,12 @@ export function orderReport(o: Tables<"sale_orders">, items?: Tables<"sale_order
           { label: "Status", value: o.status },
           { label: "Forma pagamento", value: o.payment_method },
           { label: "Parcelas", value: o.installments },
-          { label: "Desconto %", value: o.discount_pct },
-          { label: "Cashback usado", value: money(o.cashback_used) },
           { label: "Subtotal", value: money(o.subtotal) },
+          { label: "Desconto %", value: o.discount_pct },
+          { label: "Desconto R$", value: money(o.discount_value) },
+          { label: "Cashback usado", value: money(o.cashback_used) },
           { label: "Total", value: money(o.total) },
+          { label: "Endereço entrega", value: o.delivery_address },
           { label: "Observações", value: o.notes },
           { label: "Data", value: datetime(o.created_at) },
         ],
@@ -506,7 +557,7 @@ export function orderReport(o: Tables<"sale_orders">, items?: Tables<"sale_order
             title: "Itens",
             columns: ["Produto", "Qtd", "Preço unit.", "Desc %", "Total"],
             rows: items.map((it) => [
-              it.product_id ?? "—",
+              it.product_id ?? it.service_id ?? "—",
               it.qty,
               money(it.unit_price),
               `${Number(it.discount_pct ?? 0).toFixed(2)}%`,
