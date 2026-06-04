@@ -19,6 +19,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { productSchema, type ProductForm } from "@/lib/comercial-schemas";
+import { ReportActions } from "@/components/report-actions";
+import { productReport } from "@/lib/report-builders";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -150,7 +152,7 @@ function ProdutosPage() {
                   <TableHead>Estoque</TableHead>
                   <TableHead>Cashback</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="w-[110px]">Ações</TableHead>
+                  <TableHead className="w-[180px]">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -197,6 +199,7 @@ function ProdutosPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex gap-1">
+                          <ReportActions data={productReport(p)} filename={`produto-${p.sku ?? p.id.slice(0, 8)}`} />
                           <Button size="icon" variant="ghost" onClick={() => setEditing(p)}>
                             <Pencil className="h-4 w-4" />
                           </Button>
