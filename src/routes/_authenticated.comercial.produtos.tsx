@@ -620,6 +620,61 @@ function ProductFormDialog({
                 <p className="text-xs text-muted-foreground">JPG, PNG ou WebP até 5 MB cada.</p>
               </div>
             </TabsContent>
+
+            <TabsContent value="fiscal" className="space-y-3 pt-3">
+              <p className="text-xs text-muted-foreground">
+                Campos para emissão de NF-e conforme layout SEFAZ-GO.
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="NCM"><Input maxLength={10} placeholder="00000000" {...form.register("ncm")} /></Field>
+                <Field label="CEST"><Input maxLength={10} placeholder="0000000" {...form.register("cest")} /></Field>
+                <Field label="CFOP"><Input maxLength={10} placeholder="5102" {...form.register("cfop")} /></Field>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Origem (0-8)"><Input maxLength={2} {...form.register("origem")} /></Field>
+                <Field label="Unidade tributável"><Input maxLength={10} {...form.register("unidade_tributavel")} /></Field>
+                <Field label="Fator conversão tributável"><Input type="number" step="0.0001" {...form.register("fator_conversao_tributavel")} /></Field>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="EAN tributável"><Input {...form.register("ean_tributavel")} /></Field>
+                <Field label="GTIN embalagem"><Input {...form.register("gtin_embalagem")} /></Field>
+                <Field label="CNPJ fabricante"><Input {...form.register("cnpj_fabricante")} /></Field>
+              </div>
+
+              <div className="rounded border p-3">
+                <Label className="text-xs font-semibold">ICMS</Label>
+                <div className="mt-2 grid grid-cols-4 gap-3">
+                  <Field label="CST ICMS (Reg. Normal)"><Input maxLength={5} {...form.register("cst_icms")} /></Field>
+                  <Field label="CSOSN (Simples)"><Input maxLength={5} {...form.register("csosn")} /></Field>
+                  <Field label="Alíquota ICMS %"><Input type="number" step="0.01" {...form.register("aliquota_icms")} /></Field>
+                  <Field label="Alíquota ICMS-ST %"><Input type="number" step="0.01" {...form.register("aliquota_icms_st")} /></Field>
+                </div>
+              </div>
+
+              <div className="rounded border p-3">
+                <Label className="text-xs font-semibold">IPI / PIS / COFINS</Label>
+                <div className="mt-2 grid grid-cols-3 gap-3">
+                  <Field label="CST IPI"><Input maxLength={5} {...form.register("cst_ipi")} /></Field>
+                  <Field label="Alíquota IPI %"><Input type="number" step="0.01" {...form.register("aliquota_ipi")} /></Field>
+                  <Field label="Cód. Benefício Fiscal"><Input {...form.register("codigo_beneficio_fiscal")} /></Field>
+                  <Field label="CST PIS"><Input maxLength={5} {...form.register("cst_pis")} /></Field>
+                  <Field label="Alíquota PIS %"><Input type="number" step="0.01" {...form.register("aliquota_pis")} /></Field>
+                  <Field label="CST COFINS"><Input maxLength={5} {...form.register("cst_cofins")} /></Field>
+                  <Field label="Alíquota COFINS %"><Input type="number" step="0.01" {...form.register("aliquota_cofins")} /></Field>
+                  <Field label="Valor aprox. tributos R$"><Input type="number" step="0.01" {...form.register("valor_aproximado_tributos")} /></Field>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Peso bruto (kg)"><Input type="number" step="0.001" {...form.register("peso_bruto_kg")} /></Field>
+                <Field label="Peso líquido (kg)"><Input type="number" step="0.001" {...form.register("peso_liquido_kg")} /></Field>
+                <Field label="Código ANP"><Input {...form.register("codigo_anp")} /></Field>
+                <Field label="Escala relevante (S/N)"><Input maxLength={5} {...form.register("escala_relevante")} /></Field>
+              </div>
+              <Field label="Informações adicionais (NF-e)">
+                <Textarea rows={3} {...form.register("informacoes_adicionais")} />
+              </Field>
+            </TabsContent>
           </Tabs>
 
           <DialogFooter>
