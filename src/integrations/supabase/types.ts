@@ -712,19 +712,27 @@ export type Database = {
         Row: {
           aliquota_cofins: number | null
           aliquota_icms: number | null
+          aliquota_icms_st: number | null
+          aliquota_ipi: number | null
           aliquota_pis: number | null
           brand: string | null
           cashback_pct: number | null
           category_id: string | null
           cest: string | null
+          cfop: string | null
           cfop_external: string | null
           cfop_internal: string | null
+          cnpj_fabricante: string | null
+          codigo_anp: string | null
+          codigo_beneficio_fiscal: string | null
           color: string | null
           cost_avg: number | null
           cost_last: number | null
           created_at: string
+          csosn: string | null
           cst_cofins: string | null
           cst_icms: string | null
+          cst_ipi: string | null
           cst_pis: string | null
           description_long: string | null
           description_short: string | null
@@ -732,17 +740,25 @@ export type Database = {
           dim_length: number | null
           dim_width: number | null
           ean: string | null
+          ean_tributavel: string | null
+          escala_relevante: string | null
           expiry_days: number | null
+          fator_conversao_tributavel: number | null
+          gtin_embalagem: string | null
           id: string
           image_main_url: string | null
           images: Json | null
+          informacoes_adicionais: string | null
           is_active: boolean
           manufacturer: string | null
           margin_pct: number | null
           material: string | null
           name: string
           ncm: string | null
+          origem: string | null
           origin: Database["public"]["Enums"]["product_origin"] | null
+          peso_bruto_kg: number | null
+          peso_liquido_kg: number | null
           price_bronze: number | null
           price_diamante: number | null
           price_min: number | null
@@ -755,26 +771,36 @@ export type Database = {
           stock_max: number | null
           stock_min: number | null
           stock_qty: number
+          unidade_tributavel: string | null
           unit_measure: string | null
           updated_at: string
+          valor_aproximado_tributos: number | null
           weight_kg: number | null
         }
         Insert: {
           aliquota_cofins?: number | null
           aliquota_icms?: number | null
+          aliquota_icms_st?: number | null
+          aliquota_ipi?: number | null
           aliquota_pis?: number | null
           brand?: string | null
           cashback_pct?: number | null
           category_id?: string | null
           cest?: string | null
+          cfop?: string | null
           cfop_external?: string | null
           cfop_internal?: string | null
+          cnpj_fabricante?: string | null
+          codigo_anp?: string | null
+          codigo_beneficio_fiscal?: string | null
           color?: string | null
           cost_avg?: number | null
           cost_last?: number | null
           created_at?: string
+          csosn?: string | null
           cst_cofins?: string | null
           cst_icms?: string | null
+          cst_ipi?: string | null
           cst_pis?: string | null
           description_long?: string | null
           description_short?: string | null
@@ -782,17 +808,25 @@ export type Database = {
           dim_length?: number | null
           dim_width?: number | null
           ean?: string | null
+          ean_tributavel?: string | null
+          escala_relevante?: string | null
           expiry_days?: number | null
+          fator_conversao_tributavel?: number | null
+          gtin_embalagem?: string | null
           id?: string
           image_main_url?: string | null
           images?: Json | null
+          informacoes_adicionais?: string | null
           is_active?: boolean
           manufacturer?: string | null
           margin_pct?: number | null
           material?: string | null
           name: string
           ncm?: string | null
+          origem?: string | null
           origin?: Database["public"]["Enums"]["product_origin"] | null
+          peso_bruto_kg?: number | null
+          peso_liquido_kg?: number | null
           price_bronze?: number | null
           price_diamante?: number | null
           price_min?: number | null
@@ -805,26 +839,36 @@ export type Database = {
           stock_max?: number | null
           stock_min?: number | null
           stock_qty?: number
+          unidade_tributavel?: string | null
           unit_measure?: string | null
           updated_at?: string
+          valor_aproximado_tributos?: number | null
           weight_kg?: number | null
         }
         Update: {
           aliquota_cofins?: number | null
           aliquota_icms?: number | null
+          aliquota_icms_st?: number | null
+          aliquota_ipi?: number | null
           aliquota_pis?: number | null
           brand?: string | null
           cashback_pct?: number | null
           category_id?: string | null
           cest?: string | null
+          cfop?: string | null
           cfop_external?: string | null
           cfop_internal?: string | null
+          cnpj_fabricante?: string | null
+          codigo_anp?: string | null
+          codigo_beneficio_fiscal?: string | null
           color?: string | null
           cost_avg?: number | null
           cost_last?: number | null
           created_at?: string
+          csosn?: string | null
           cst_cofins?: string | null
           cst_icms?: string | null
+          cst_ipi?: string | null
           cst_pis?: string | null
           description_long?: string | null
           description_short?: string | null
@@ -832,17 +876,25 @@ export type Database = {
           dim_length?: number | null
           dim_width?: number | null
           ean?: string | null
+          ean_tributavel?: string | null
+          escala_relevante?: string | null
           expiry_days?: number | null
+          fator_conversao_tributavel?: number | null
+          gtin_embalagem?: string | null
           id?: string
           image_main_url?: string | null
           images?: Json | null
+          informacoes_adicionais?: string | null
           is_active?: boolean
           manufacturer?: string | null
           margin_pct?: number | null
           material?: string | null
           name?: string
           ncm?: string | null
+          origem?: string | null
           origin?: Database["public"]["Enums"]["product_origin"] | null
+          peso_bruto_kg?: number | null
+          peso_liquido_kg?: number | null
           price_bronze?: number | null
           price_diamante?: number | null
           price_min?: number | null
@@ -855,8 +907,10 @@ export type Database = {
           stock_max?: number | null
           stock_min?: number | null
           stock_qty?: number
+          unidade_tributavel?: string | null
           unit_measure?: string | null
           updated_at?: string
+          valor_aproximado_tributos?: number | null
           weight_kg?: number | null
         }
         Relationships: [
