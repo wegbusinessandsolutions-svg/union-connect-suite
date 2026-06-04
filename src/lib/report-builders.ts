@@ -545,7 +545,7 @@ export function orderReport(o: Tables<"sale_orders">, items?: Tables<"sale_order
           { label: "Desconto R$", value: money(o.discount_value) },
           { label: "Cashback usado", value: money(o.cashback_used) },
           { label: "Total", value: money(o.total) },
-          { label: "Endereço entrega", value: o.delivery_address },
+          { label: "Endereço entrega", value: o.delivery_address ? JSON.stringify(o.delivery_address) : null },
           { label: "Observações", value: o.notes },
           { label: "Data", value: datetime(o.created_at) },
         ],
