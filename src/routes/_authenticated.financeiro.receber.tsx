@@ -7,6 +7,8 @@ import { Plus, Pencil, Trash2, RefreshCw, Loader2, CheckCircle2 } from "lucide-r
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ReportActions } from "@/components/report-actions";
+import { receivableReport } from "@/lib/report-builders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
