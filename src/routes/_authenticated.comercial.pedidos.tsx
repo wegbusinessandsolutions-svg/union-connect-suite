@@ -17,6 +17,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { orderSchema, type OrderForm } from "@/lib/comercial-schemas";
+import { ReportActions } from "@/components/report-actions";
+import { orderReport } from "@/lib/report-builders";
 import type { Tables } from "@/integrations/supabase/types";
 
 type OrderRow = Tables<"sale_orders"> & {
@@ -135,16 +137,17 @@ function PedidosPage() {
                   <TableHead>Pagamento</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Criado</TableHead>
+                  <TableHead className="w-[110px] text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {list.isError && (
-                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-sm text-red-600">
+                  <TableRow><TableCell colSpan={8} className="py-8 text-center text-sm text-red-600">
                     {(list.error as Error).message}
                   </TableCell></TableRow>
                 )}
                 {!list.isError && list.data?.length === 0 && (
-                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">
+                  <TableRow><TableCell colSpan={8} className="py-8 text-center text-sm text-muted-foreground">
                     Nenhum pedido ainda.
                   </TableCell></TableRow>
                 )}
@@ -175,6 +178,14 @@ function PedidosPage() {
                     </TableCell>
                     <TableCell className="text-xs">
                       {format(new Date(o.created_at), "dd/MM/yyyy HH:mm")}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end">
+                        <ReportActions
+                          data={orderReport(o)}
+                          filename={`pedido-${o.order_number}`}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
