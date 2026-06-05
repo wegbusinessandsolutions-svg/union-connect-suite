@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { companySchema, type CompanyForm } from "@/lib/admin-schemas";
+import { ReportActions } from "@/components/report-actions";
+import { companyReport } from "@/lib/report-builders";
 
 export const Route = createFileRoute("/_authenticated/admin/empresa")({
   head: () => ({ meta: [{ title: "Empresa — Admin" }] }),
@@ -86,12 +88,24 @@ function EmpresaPage() {
   return (
     <div className="bg-background p-6">
       <div className="mx-auto max-w-5xl space-y-6">
-        <div className="flex items-center gap-3">
-          <Building2 className="h-6 w-6 text-muted-foreground" />
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Empresa</h1>
-            <p className="text-sm text-muted-foreground">Dados fiscais, endereço e responsável.</p>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Building2 className="h-6 w-6 text-muted-foreground" />
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Empresa</h1>
+              <p className="text-sm text-muted-foreground">Dados fiscais, endereço e responsável.</p>
+            </div>
           </div>
+          {company.data && (
+            <div className="flex gap-2">
+              <ReportActions
+                data={companyReport(company.data)}
+                filename={`empresa-${company.data.razao_social ?? "dados"}`}
+                size="sm"
+                variant="outline"
+              />
+            </div>
+          )}
         </div>
 
         <Card>

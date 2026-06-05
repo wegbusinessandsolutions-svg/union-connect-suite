@@ -18,6 +18,8 @@ import {
   grantRole,
   revokeRole,
 } from "@/lib/admin-users.functions";
+import { ReportActions } from "@/components/report-actions";
+import { datetime, type ReportData } from "@/lib/report";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   head: () => ({ meta: [{ title: "Usuários — Admin" }] }),
@@ -260,6 +262,10 @@ function UsuariosPage() {
                             >
                               {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
                             </Button>
+                            <ReportActions
+                              data={buildUserReport(u)}
+                              filename={`usuario-${(u.email ?? u.id).replace(/[^a-z0-9]+/gi, "_")}`}
+                            />
                           </div>
                         </TableCell>
                       </TableRow>
@@ -297,4 +303,36 @@ function UsuariosPage() {
       </div>
     </div>
   );
+}
+
+type UserRow = {
+  id: string;
+  email: string | null;
+  created_at: string;
+  last_sign_in_at: string | null;
+  roles: string[];
+};
+
+function buildUserReport(u: UserRow): ReportData {
+  return {
+    title: `Ficha do Usuário — ${u.email ?? u.id}`,
+    subtitle: u.id,
+    sections: [
+      {
+        title: "Identificação",
+        fields: [
+          { label: "ID", value: u.id },
+          { label: "E-mail", value: u.email },
+          { label: "Papéis", value: u.roles.join(", ") || "—" },
+        ],
+      },
+      {
+        title: "Atividade",
+        fields: [
+          { label: "Criado em", value: datetime(u.created_at) },
+          { label: "Último login", value: datetime(u.last_sign_in_at) },
+        ],
+      },
+    ],
+  };
 }
