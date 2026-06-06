@@ -180,7 +180,13 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
       const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, authAttrs);
       if (error) throw new Error(error.message);
     }
-    const profilePatch: Record<string, unknown> = {};
+    const profilePatch: {
+      name?: string;
+      email?: string;
+      phone?: string | null;
+      department?: string | null;
+      is_active?: boolean;
+    } = {};
     if (data.name !== undefined) profilePatch.name = data.name;
     if (data.email !== undefined) profilePatch.email = data.email;
     if (data.phone !== undefined) profilePatch.phone = data.phone;
