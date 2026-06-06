@@ -358,7 +358,6 @@ function UsuariosPage() {
                               variant="ghost"
                               title="Excluir usuário"
                               onClick={() => setDeletingUserId(u.id)}
-                              disabled={u.id === (meRoles.data as unknown as string[] | undefined ? undefined : undefined)}
                             >
                               <Trash2 className="h-4 w-4 text-destructive" />
                             </Button>
