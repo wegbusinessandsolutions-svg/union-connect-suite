@@ -157,3 +157,92 @@ export const revokeRole = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+const updateUserSchema = z.object({
+  userId: z.string().uuid(),
+  email: z.string().email().max(255).optional(),
+  password: z.string().min(6).max(72).optional(),
+  name: z.string().trim().max(255).optional(),
+  phone: z.string().trim().max(40).optional().nullable(),
+  department: z.string().trim().max(120).optional().nullable(),
+  is_active: z.boolean().optional(),
+});
+
+export const adminUpdateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => updateUserSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const authAttrs: { email?: string; password?: string } = {};
+    if (data.email) authAttrs.email = data.email;
+    if (data.password) authAttrs.password = data.password;
+    if (Object.keys(authAttrs).length > 0) {
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, authAttrs);
+      if (error) throw new Error(error.message);
+    }
+    const profilePatch: {
+      name?: string;
+      email?: string;
+      phone?: string | null;
+      department?: string | null;
+      is_active?: boolean;
+    } = {};
+    if (data.name !== undefined) profilePatch.name = data.name;
+    if (data.email !== undefined) profilePatch.email = data.email;
+    if (data.phone !== undefined) profilePatch.phone = data.phone;
+    if (data.department !== undefined) profilePatch.department = data.department;
+    if (data.is_active !== undefined) profilePatch.is_active = data.is_active;
+    if (Object.keys(profilePatch).length > 0) {
+      const { error } = await supabaseAdmin
+        .from("user_profiles")
+        .update(profilePatch)
+        .eq("id", data.userId);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
+
+const deleteUserSchema = z.object({ userId: z.string().uuid() });
+
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => deleteUserSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    if (data.userId === context.userId) {
+      throw new Error("Você não pode excluir sua própria conta.");
+    }
+    const { data: isAdminRow } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id")
+      .eq("user_id", data.userId)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (isAdminRow) {
+      const { count, error: countError } = await supabaseAdmin
+        .from("user_roles")
+        .select("*", { count: "exact", head: true })
+        .eq("role", "admin");
+      if (countError) throw new Error(countError.message);
+      if ((count ?? 0) <= 1) {
+        throw new Error("Não é possível excluir o último admin do sistema.");
+      }
+    }
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const getUserProfile = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ userId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: profile, error } = await supabaseAdmin
+      .from("user_profiles")
+      .select("id, name, email, phone, department, is_active")
+      .eq("id", data.userId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return { profile };
+  });

@@ -3,20 +3,27 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { format } from "date-fns";
-import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2, ChevronLeft, ChevronRight, Search, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   listUsersWithRoles,
   grantRole,
   revokeRole,
+  adminUpdateUser,
+  adminDeleteUser,
+  getUserProfile,
 } from "@/lib/admin-users.functions";
 import { ReportActions } from "@/components/report-actions";
 import { datetime, type ReportData } from "@/lib/report";
@@ -60,6 +67,78 @@ function UsuariosPage() {
   const fetchUsers = useServerFn(listUsersWithRoles);
   const grant = useServerFn(grantRole);
   const revoke = useServerFn(revokeRole);
+  const updateUserFn = useServerFn(adminUpdateUser);
+  const deleteUserFn = useServerFn(adminDeleteUser);
+  const getProfileFn = useServerFn(getUserProfile);
+
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    department: "",
+    is_active: true,
+    password: "",
+  });
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+
+  async function openEdit(u: UserRow) {
+    setEditingUserId(u.id);
+    setEditForm({
+      email: u.email ?? "",
+      name: "",
+      phone: "",
+      department: "",
+      is_active: true,
+      password: "",
+    });
+    try {
+      const res = await getProfileFn({ data: { userId: u.id } });
+      const p = res.profile;
+      if (p) {
+        setEditForm((f) => ({
+          ...f,
+          email: p.email ?? u.email ?? "",
+          name: p.name ?? "",
+          phone: p.phone ?? "",
+          department: p.department ?? "",
+          is_active: p.is_active ?? true,
+        }));
+      }
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  const updateMut = useMutation({
+    mutationFn: () => updateUserFn({
+      data: {
+        userId: editingUserId!,
+        email: editForm.email || undefined,
+        password: editForm.password || undefined,
+        name: editForm.name,
+        phone: editForm.phone || null,
+        department: editForm.department || null,
+        is_active: editForm.is_active,
+      },
+    }),
+    onSuccess: () => {
+      toast.success("Usuário atualizado");
+      setEditingUserId(null);
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: (userId: string) => deleteUserFn({ data: { userId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído");
+      setDeletingUserId(null);
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const meRoles = useQuery({
     queryKey: ["my-roles"],
@@ -266,6 +345,22 @@ function UsuariosPage() {
                               data={buildUserReport(u)}
                               filename={`usuario-${(u.email ?? u.id).replace(/[^a-z0-9]+/gi, "_")}`}
                             />
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              title="Editar usuário"
+                              onClick={() => openEdit(u)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              title="Excluir usuário"
+                              onClick={() => setDeletingUserId(u.id)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -301,6 +396,97 @@ function UsuariosPage() {
           </Card>
         )}
       </div>
+
+      <Dialog open={editingUserId !== null} onOpenChange={(o) => !o && setEditingUserId(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Editar usuário</DialogTitle>
+            <DialogDescription>
+              Atualize os dados do usuário. Deixe a senha em branco para mantê-la.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3">
+            <div className="grid gap-1.5">
+              <Label>E-mail</Label>
+              <Input
+                type="email"
+                value={editForm.email}
+                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Nome</Label>
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>Telefone</Label>
+                <Input
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm((f) => ({ ...f, phone: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Departamento</Label>
+                <Input
+                  value={editForm.department}
+                  onChange={(e) => setEditForm((f) => ({ ...f, department: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Nova senha (opcional)</Label>
+              <Input
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                value={editForm.password}
+                onChange={(e) => setEditForm((f) => ({ ...f, password: e.target.value }))}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <Label className="text-sm">Ativo</Label>
+                <p className="text-xs text-muted-foreground">Usuários inativos não podem operar o sistema.</p>
+              </div>
+              <Switch
+                checked={editForm.is_active}
+                onCheckedChange={(v) => setEditForm((f) => ({ ...f, is_active: v }))}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingUserId(null)}>Cancelar</Button>
+            <Button onClick={() => updateMut.mutate()} disabled={updateMut.isPending}>
+              {updateMut.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Salvar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={deletingUserId !== null} onOpenChange={(o) => !o && setDeletingUserId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir usuário?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação remove permanentemente o usuário e seu acesso ao sistema. Não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => { e.preventDefault(); if (deletingUserId) deleteMut.mutate(deletingUserId); }}
+              disabled={deleteMut.isPending}
+            >
+              {deleteMut.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
