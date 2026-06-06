@@ -345,6 +345,23 @@ function UsuariosPage() {
                               data={buildUserReport(u)}
                               filename={`usuario-${(u.email ?? u.id).replace(/[^a-z0-9]+/gi, "_")}`}
                             />
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              title="Editar usuário"
+                              onClick={() => openEdit(u)}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              title="Excluir usuário"
+                              onClick={() => setDeletingUserId(u.id)}
+                              disabled={u.id === (meRoles.data as unknown as string[] | undefined ? undefined : undefined)}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
                         </TableCell>
                       </TableRow>
