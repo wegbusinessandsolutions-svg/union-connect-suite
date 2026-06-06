@@ -3,20 +3,27 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { format } from "date-fns";
-import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { RefreshCw, Shield, ShieldOff, UserPlus, Loader2, ChevronLeft, ChevronRight, Search, Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   listUsersWithRoles,
   grantRole,
   revokeRole,
+  adminUpdateUser,
+  adminDeleteUser,
+  getUserProfile,
 } from "@/lib/admin-users.functions";
 import { ReportActions } from "@/components/report-actions";
 import { datetime, type ReportData } from "@/lib/report";
