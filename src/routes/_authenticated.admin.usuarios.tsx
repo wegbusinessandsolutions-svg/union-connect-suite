@@ -67,6 +67,78 @@ function UsuariosPage() {
   const fetchUsers = useServerFn(listUsersWithRoles);
   const grant = useServerFn(grantRole);
   const revoke = useServerFn(revokeRole);
+  const updateUserFn = useServerFn(adminUpdateUser);
+  const deleteUserFn = useServerFn(adminDeleteUser);
+  const getProfileFn = useServerFn(getUserProfile);
+
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    email: "",
+    name: "",
+    phone: "",
+    department: "",
+    is_active: true,
+    password: "",
+  });
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
+
+  async function openEdit(u: UserRow) {
+    setEditingUserId(u.id);
+    setEditForm({
+      email: u.email ?? "",
+      name: "",
+      phone: "",
+      department: "",
+      is_active: true,
+      password: "",
+    });
+    try {
+      const res = await getProfileFn({ data: { userId: u.id } });
+      const p = res.profile;
+      if (p) {
+        setEditForm((f) => ({
+          ...f,
+          email: p.email ?? u.email ?? "",
+          name: p.name ?? "",
+          phone: p.phone ?? "",
+          department: p.department ?? "",
+          is_active: p.is_active ?? true,
+        }));
+      }
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  const updateMut = useMutation({
+    mutationFn: () => updateUserFn({
+      data: {
+        userId: editingUserId!,
+        email: editForm.email || undefined,
+        password: editForm.password || undefined,
+        name: editForm.name,
+        phone: editForm.phone || null,
+        department: editForm.department || null,
+        is_active: editForm.is_active,
+      },
+    }),
+    onSuccess: () => {
+      toast.success("Usuário atualizado");
+      setEditingUserId(null);
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteMut = useMutation({
+    mutationFn: (userId: string) => deleteUserFn({ data: { userId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído");
+      setDeletingUserId(null);
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const meRoles = useQuery({
     queryKey: ["my-roles"],
