@@ -676,6 +676,154 @@ export type Database = {
           },
         ]
       }
+      payment_integrations: {
+        Row: {
+          created_at: string
+          environment: string
+          extra: Json
+          id: string
+          is_active: boolean
+          notification_email: string | null
+          provider: string
+          public_key: string | null
+          statement_descriptor: string | null
+          updated_at: string
+          webhook_secret: string | null
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          extra?: Json
+          id?: string
+          is_active?: boolean
+          notification_email?: string | null
+          provider?: string
+          public_key?: string | null
+          statement_descriptor?: string | null
+          updated_at?: string
+          webhook_secret?: string | null
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          extra?: Json
+          id?: string
+          is_active?: boolean
+          notification_email?: string | null
+          provider?: string
+          public_key?: string | null
+          statement_descriptor?: string | null
+          updated_at?: string
+          webhook_secret?: string | null
+        }
+        Relationships: []
+      }
+      payment_transactions: {
+        Row: {
+          amount: number
+          client_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          method: string
+          mp_payment_id: string | null
+          mp_preference_id: string | null
+          order_id: string | null
+          paid_at: string | null
+          payer_doc: string | null
+          payer_email: string | null
+          provider: string
+          qr_code: string | null
+          qr_code_base64: string | null
+          raw_response: Json | null
+          raw_webhook: Json | null
+          receivable_id: string | null
+          status: string
+          status_detail: string | null
+          ticket_url: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          method: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          payer_doc?: string | null
+          payer_email?: string | null
+          provider?: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          raw_response?: Json | null
+          raw_webhook?: Json | null
+          receivable_id?: string | null
+          status?: string
+          status_detail?: string | null
+          ticket_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          method?: string
+          mp_payment_id?: string | null
+          mp_preference_id?: string | null
+          order_id?: string | null
+          paid_at?: string | null
+          payer_doc?: string | null
+          payer_email?: string | null
+          provider?: string
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          raw_response?: Json | null
+          raw_webhook?: Json | null
+          receivable_id?: string | null
+          status?: string
+          status_detail?: string | null
+          ticket_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "sale_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_transactions_receivable_id_fkey"
+            columns: ["receivable_id"]
+            isOneToOne: false
+            referencedRelation: "receivables"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       product_categories: {
         Row: {
           created_at: string
@@ -1420,6 +1568,15 @@ export type Database = {
     Functions: {
       claim_admin_if_none: { Args: never; Returns: boolean }
       enable_audit: { Args: { _table_name: string }; Returns: undefined }
+      get_payment_public_config: {
+        Args: never
+        Returns: {
+          environment: string
+          is_active: boolean
+          provider: string
+          public_key: string
+        }[]
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
