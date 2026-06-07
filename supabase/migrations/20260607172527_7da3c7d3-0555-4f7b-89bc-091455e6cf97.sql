@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.get_payment_public_config() FROM anon, PUBLIC;
