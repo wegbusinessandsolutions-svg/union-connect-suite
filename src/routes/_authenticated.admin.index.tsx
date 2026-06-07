@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, ShieldCheck, Building2, BadgeCheck, BarChart3 } from "lucide-react";
+import { Users, ShieldCheck, Building2, BadgeCheck, BarChart3, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   head: () => ({ meta: [{ title: "Admin" }] }),
@@ -11,6 +11,7 @@ const ITEMS = [
   { to: "/admin/usuarios", title: "Usuários", desc: "Papéis e permissões.", icon: Users },
   { to: "/admin/funcionarios", title: "Funcionários", desc: "Cadastro de colaboradores.", icon: BadgeCheck },
   { to: "/admin/empresa", title: "Empresa", desc: "Dados fiscais e endereço.", icon: Building2 },
+  { to: "/admin/integracoes-pagamentos", title: "Integração Pagamentos", desc: "Mercado Pago: PIX, boleto e cartão.", icon: CreditCard },
   { to: "/admin/relatorios", title: "Relatórios", desc: "Indicadores gerais.", icon: BarChart3 },
   { to: "/admin/audit-logs", title: "Audit Logs", desc: "Trilha de auditoria.", icon: ShieldCheck },
 ] as const;
