@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { PaymentChargeDialog } from "@/components/payment-charge-dialog";
 
 export const Route = createFileRoute("/_authenticated/cliente/pedidos")({
   head: () => ({ meta: [{ title: "Meus pedidos" }] }),
@@ -21,12 +24,21 @@ const STATUS_LABELS: Record<string, string> = {
   cancelado: "Cancelado",
 };
 
+type OrderRow = {
+  id: string; order_number: number; created_at: string; status: string;
+  payment_method: string | null; total: number;
+};
+
 function ClientePedidosPage() {
+  const [payOrder, setPayOrder] = useState<OrderRow | null>(null);
+  const [userEmail, setUserEmail] = useState<string>("");
+
   const orders = useQuery({
     queryKey: ["my-orders"],
-    queryFn: async () => {
+    queryFn: async (): Promise<OrderRow[]> => {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) return [];
+      setUserEmail(u.user.email ?? "");
       const { data: myClients } = await supabase.from("clients").select("id").eq("user_id", u.user.id);
       const clientIds = (myClients ?? []).map((c) => c.id);
       let q = supabase.from("sale_orders").select("*").order("created_at", { ascending: false }).limit(100);
@@ -37,7 +49,7 @@ function ClientePedidosPage() {
       }
       const { data, error } = await q;
       if (error) throw error;
-      return data;
+      return (data ?? []) as OrderRow[];
     },
   });
 
@@ -48,7 +60,7 @@ function ClientePedidosPage() {
           <ShoppingCart className="h-6 w-6 text-muted-foreground" />
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Meus pedidos</h1>
-            <p className="text-sm text-muted-foreground">Histórico de compras e acompanhamento.</p>
+            <p className="text-sm text-muted-foreground">Histórico de compras, pagamento e acompanhamento.</p>
           </div>
         </div>
         <Card>
@@ -58,25 +70,47 @@ function ClientePedidosPage() {
               <TableHeader><TableRow>
                 <TableHead>#</TableHead><TableHead>Data</TableHead><TableHead>Status</TableHead>
                 <TableHead>Pagamento</TableHead><TableHead className="text-right">Total</TableHead>
+                <TableHead className="w-[110px] text-right">Ações</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {(orders.data ?? []).length === 0 && !orders.isLoading && (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">Nenhum pedido ainda.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum pedido ainda.</TableCell></TableRow>
                 )}
-                {(orders.data ?? []).map((o) => (
-                  <TableRow key={o.id}>
-                    <TableCell className="font-mono">#{o.order_number}</TableCell>
-                    <TableCell className="text-xs">{format(new Date(o.created_at), "dd/MM/yyyy HH:mm")}</TableCell>
-                    <TableCell><Badge variant="secondary">{STATUS_LABELS[o.status] ?? o.status}</Badge></TableCell>
-                    <TableCell className="text-xs">{o.payment_method ?? "—"}</TableCell>
-                    <TableCell className="text-right font-medium">{brl(Number(o.total))}</TableCell>
-                  </TableRow>
-                ))}
+                {(orders.data ?? []).map((o) => {
+                  const payable = o.status !== "cancelado" && o.status !== "entregue";
+                  return (
+                    <TableRow key={o.id}>
+                      <TableCell className="font-mono">#{o.order_number}</TableCell>
+                      <TableCell className="text-xs">{format(new Date(o.created_at), "dd/MM/yyyy HH:mm")}</TableCell>
+                      <TableCell><Badge variant="secondary">{STATUS_LABELS[o.status] ?? o.status}</Badge></TableCell>
+                      <TableCell className="text-xs">{o.payment_method ?? "—"}</TableCell>
+                      <TableCell className="text-right font-medium">{brl(Number(o.total))}</TableCell>
+                      <TableCell className="text-right">
+                        {payable && (
+                          <Button size="sm" variant="outline" onClick={() => setPayOrder(o)}>
+                            <CreditCard className="mr-1 h-4 w-4" /> Pagar
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
       </div>
+
+      {payOrder && (
+        <PaymentChargeDialog
+          open
+          onClose={() => setPayOrder(null)}
+          amount={Number(payOrder.total)}
+          description={`Pedido #${payOrder.order_number}`}
+          orderId={payOrder.id}
+          defaultEmail={userEmail}
+        />
+      )}
     </div>
   );
 }

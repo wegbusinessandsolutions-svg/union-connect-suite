@@ -3,12 +3,13 @@ import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, RefreshCw, Loader2, CheckCircle2 } from "lucide-react";
+import { Plus, Pencil, Trash2, RefreshCw, Loader2, CheckCircle2, CreditCard } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ReportActions } from "@/components/report-actions";
 import { receivableReport } from "@/lib/report-builders";
+import { PaymentChargeDialog } from "@/components/payment-charge-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,6 +46,7 @@ function ReceberPage() {
   const [editing, setEditing] = useState<Receivable | null>(null);
   const [creating, setCreating] = useState(false);
   const [toDelete, setToDelete] = useState<Receivable | null>(null);
+  const [chargeRow, setChargeRow] = useState<Receivable | null>(null);
 
   const list = useQuery({
     queryKey: ["receivables", status],
@@ -189,9 +191,14 @@ function ReceberPage() {
                       <div className="flex gap-1">
                         <ReportActions data={receivableReport(r)} filename={`receber-${r.id.slice(0, 8)}`} />
                         {r.status !== "pago" && r.status !== "cancelado" && (
-                          <Button size="icon" variant="ghost" title="Receber" onClick={() => receiveMut.mutate(r)}>
-                            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                          </Button>
+                          <>
+                            <Button size="icon" variant="ghost" title="Cobrar via Mercado Pago" onClick={() => setChargeRow(r)}>
+                              <CreditCard className="h-4 w-4 text-emerald-600" />
+                            </Button>
+                            <Button size="icon" variant="ghost" title="Marcar como recebido" onClick={() => receiveMut.mutate(r)}>
+                              <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                            </Button>
+                          </>
                         )}
                         <Button size="icon" variant="ghost" onClick={() => setEditing(r)}><Pencil className="h-4 w-4" /></Button>
                         <Button size="icon" variant="ghost" onClick={() => setToDelete(r)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -234,6 +241,16 @@ function ReceberPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {chargeRow && (
+        <PaymentChargeDialog
+          open
+          onClose={() => setChargeRow(null)}
+          amount={Number(chargeRow.total)}
+          description={chargeRow.description ?? `Conta a receber ${chargeRow.id.slice(0,8)}`}
+          receivableId={chargeRow.id}
+        />
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import {
   LogOut, Menu, X, ShieldCheck, Users, Banknote, Building2, Wallet,
   ShoppingCart, Boxes, Truck, Package, Wrench, UserCircle, Gift,
-  BadgeCheck, BarChart3, FolderTree,
+  BadgeCheck, BarChart3, FolderTree, CreditCard,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ const NAV: NavItem[] = [
   { to: "/admin/usuarios", label: "— Usuários", icon: Users, roles: ["admin"] },
   { to: "/admin/funcionarios", label: "— Funcionários", icon: BadgeCheck, roles: ["admin"] },
   { to: "/admin/empresa", label: "— Empresa", icon: Building2, roles: ["admin"] },
+  { to: "/admin/integracoes-pagamentos", label: "— Integração Pagamentos", icon: CreditCard, roles: ["admin"] },
   { to: "/admin/relatorios", label: "— Relatórios", icon: BarChart3, roles: ["admin"] },
   { to: "/admin/audit-logs", label: "— Audit Logs", icon: ShieldCheck, roles: ["admin"] },
   // Financeiro
