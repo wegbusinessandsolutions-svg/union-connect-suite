@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, RefreshCw, Loader2, Search } from "lucide-react";
+import { Plus, Trash2, RefreshCw, Loader2, Search, CreditCard } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +19,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { orderSchema, type OrderForm } from "@/lib/comercial-schemas";
 import { ReportActions } from "@/components/report-actions";
 import { orderReport } from "@/lib/report-builders";
+import { PaymentChargeDialog } from "@/components/payment-charge-dialog";
 import type { Tables } from "@/integrations/supabase/types";
 
 type OrderRow = Tables<"sale_orders"> & {
@@ -47,6 +48,7 @@ function PedidosPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [creating, setCreating] = useState(false);
+  const [chargeOrder, setChargeOrder] = useState<OrderRow | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput.trim()), 300);
@@ -137,7 +139,7 @@ function PedidosPage() {
                   <TableHead>Pagamento</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Criado</TableHead>
-                  <TableHead className="w-[110px] text-right">Ações</TableHead>
+                  <TableHead className="w-[170px] text-right">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -180,7 +182,13 @@ function PedidosPage() {
                       {format(new Date(o.created_at), "dd/MM/yyyy HH:mm")}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          size="icon" variant="ghost" title="Cobrar via Mercado Pago"
+                          onClick={() => setChargeOrder(o)}
+                        >
+                          <CreditCard className="h-4 w-4 text-emerald-600" />
+                        </Button>
                         <ReportActions
                           data={orderReport(o)}
                           filename={`pedido-${o.order_number}`}
@@ -202,6 +210,17 @@ function PedidosPage() {
             qc.invalidateQueries({ queryKey: ["sale_orders"] });
             setCreating(false);
           }}
+        />
+      )}
+
+      {chargeOrder && (
+        <PaymentChargeDialog
+          open
+          onClose={() => setChargeOrder(null)}
+          amount={Number(chargeOrder.total)}
+          description={`Pedido #${chargeOrder.order_number}`}
+          orderId={chargeOrder.id}
+          defaultName={chargeOrder.clients?.name ?? ""}
         />
       )}
     </div>
