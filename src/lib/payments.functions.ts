@@ -91,10 +91,10 @@ export const testMpConnection = createServerFn({ method: "POST" })
     return {
       ok: true,
       user: {
-        id: res.id,
-        nickname: res.nickname,
-        email: res.email,
-        site_id: res.site_id,
+        id: String(res.id ?? ""),
+        nickname: String(res.nickname ?? ""),
+        email: String(res.email ?? ""),
+        site_id: String(res.site_id ?? ""),
       },
     };
   });
@@ -286,7 +286,7 @@ export const refreshMpCharge = createServerFn({ method: "POST" })
       }
     }
     await supabaseAdmin.from("payment_transactions").update(updates as never).eq("id", tx.id);
-    return { status, status_detail: updates.status_detail };
+    return { status, status_detail: String(updates.status_detail ?? "") };
   });
 
 export const listChargesForOrder = createServerFn({ method: "GET" })

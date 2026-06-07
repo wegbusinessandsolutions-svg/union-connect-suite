@@ -26,6 +26,7 @@ import { Route as AuthenticatedExpedicaoIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedComercialIndexRouteImport } from './routes/_authenticated.comercial.index'
 import { Route as AuthenticatedClienteIndexRouteImport } from './routes/_authenticated.cliente.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as ApiPublicMpWebhookRouteImport } from './routes/api/public/mp-webhook'
 import { Route as AuthenticatedFinanceiroReceberRouteImport } from './routes/_authenticated.financeiro.receber'
 import { Route as AuthenticatedFinanceiroPagarRouteImport } from './routes/_authenticated.financeiro.pagar'
 import { Route as AuthenticatedFinanceiroFornecedoresRouteImport } from './routes/_authenticated.financeiro.fornecedores'
@@ -43,6 +44,7 @@ import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_auth
 import { Route as AuthenticatedClienteCashbackRouteImport } from './routes/_authenticated.cliente.cashback'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated.admin.relatorios'
+import { Route as AuthenticatedAdminIntegracoesPagamentosRouteImport } from './routes/_authenticated.admin.integracoes-pagamentos'
 import { Route as AuthenticatedAdminFuncionariosRouteImport } from './routes/_authenticated.admin.funcionarios'
 import { Route as AuthenticatedAdminEmpresaRouteImport } from './routes/_authenticated.admin.empresa'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
@@ -134,6 +136,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const ApiPublicMpWebhookRoute = ApiPublicMpWebhookRouteImport.update({
+  id: '/api/public/mp-webhook',
+  path: '/api/public/mp-webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedFinanceiroReceberRoute =
   AuthenticatedFinanceiroReceberRouteImport.update({
@@ -237,6 +244,12 @@ const AuthenticatedAdminRelatoriosRoute =
     path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminIntegracoesPagamentosRoute =
+  AuthenticatedAdminIntegracoesPagamentosRouteImport.update({
+    id: '/integracoes-pagamentos',
+    path: '/integracoes-pagamentos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminFuncionariosRoute =
   AuthenticatedAdminFuncionariosRouteImport.update({
     id: '/funcionarios',
@@ -271,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -288,6 +302,7 @@ export interface FileRoutesByFullPath {
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
   '/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/cliente/': typeof AuthenticatedClienteIndexRoute
   '/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -304,6 +319,7 @@ export interface FileRoutesByTo {
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -321,6 +337,7 @@ export interface FileRoutesByTo {
   '/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
   '/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/cliente': typeof AuthenticatedClienteIndexRoute
   '/comercial': typeof AuthenticatedComercialIndexRoute
@@ -344,6 +361,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
   '/_authenticated/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/_authenticated/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
+  '/_authenticated/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -361,6 +379,7 @@ export interface FileRoutesById {
   '/_authenticated/financeiro/fornecedores': typeof AuthenticatedFinanceiroFornecedoresRoute
   '/_authenticated/financeiro/pagar': typeof AuthenticatedFinanceiroPagarRoute
   '/_authenticated/financeiro/receber': typeof AuthenticatedFinanceiroReceberRoute
+  '/api/public/mp-webhook': typeof ApiPublicMpWebhookRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/cliente/': typeof AuthenticatedClienteIndexRoute
   '/_authenticated/comercial/': typeof AuthenticatedComercialIndexRoute
@@ -384,6 +403,7 @@ export interface FileRouteTypes {
     | '/admin/audit-logs'
     | '/admin/empresa'
     | '/admin/funcionarios'
+    | '/admin/integracoes-pagamentos'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
@@ -401,6 +421,7 @@ export interface FileRouteTypes {
     | '/financeiro/fornecedores'
     | '/financeiro/pagar'
     | '/financeiro/receber'
+    | '/api/public/mp-webhook'
     | '/admin/'
     | '/cliente/'
     | '/comercial/'
@@ -417,6 +438,7 @@ export interface FileRouteTypes {
     | '/admin/audit-logs'
     | '/admin/empresa'
     | '/admin/funcionarios'
+    | '/admin/integracoes-pagamentos'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
@@ -434,6 +456,7 @@ export interface FileRouteTypes {
     | '/financeiro/fornecedores'
     | '/financeiro/pagar'
     | '/financeiro/receber'
+    | '/api/public/mp-webhook'
     | '/admin'
     | '/cliente'
     | '/comercial'
@@ -456,6 +479,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/audit-logs'
     | '/_authenticated/admin/empresa'
     | '/_authenticated/admin/funcionarios'
+    | '/_authenticated/admin/integracoes-pagamentos'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/cliente/cashback'
@@ -473,6 +497,7 @@ export interface FileRouteTypes {
     | '/_authenticated/financeiro/fornecedores'
     | '/_authenticated/financeiro/pagar'
     | '/_authenticated/financeiro/receber'
+    | '/api/public/mp-webhook'
     | '/_authenticated/admin/'
     | '/_authenticated/cliente/'
     | '/_authenticated/comercial/'
@@ -487,6 +512,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   UnauthorizedRoute: typeof UnauthorizedRoute
+  ApiPublicMpWebhookRoute: typeof ApiPublicMpWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -610,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/mp-webhook': {
+      id: '/api/public/mp-webhook'
+      path: '/api/public/mp-webhook'
+      fullPath: '/api/public/mp-webhook'
+      preLoaderRoute: typeof ApiPublicMpWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/financeiro/receber': {
       id: '/_authenticated/financeiro/receber'
       path: '/receber'
@@ -729,6 +762,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/integracoes-pagamentos': {
+      id: '/_authenticated/admin/integracoes-pagamentos'
+      path: '/integracoes-pagamentos'
+      fullPath: '/admin/integracoes-pagamentos'
+      preLoaderRoute: typeof AuthenticatedAdminIntegracoesPagamentosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/funcionarios': {
       id: '/_authenticated/admin/funcionarios'
       path: '/funcionarios'
@@ -757,6 +797,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAuditLogsRoute: typeof AuthenticatedAdminAuditLogsRoute
   AuthenticatedAdminEmpresaRoute: typeof AuthenticatedAdminEmpresaRoute
   AuthenticatedAdminFuncionariosRoute: typeof AuthenticatedAdminFuncionariosRoute
+  AuthenticatedAdminIntegracoesPagamentosRoute: typeof AuthenticatedAdminIntegracoesPagamentosRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -766,6 +807,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAuditLogsRoute: AuthenticatedAdminAuditLogsRoute,
   AuthenticatedAdminEmpresaRoute: AuthenticatedAdminEmpresaRoute,
   AuthenticatedAdminFuncionariosRoute: AuthenticatedAdminFuncionariosRoute,
+  AuthenticatedAdminIntegracoesPagamentosRoute:
+    AuthenticatedAdminIntegracoesPagamentosRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -889,6 +932,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   UnauthorizedRoute: UnauthorizedRoute,
+  ApiPublicMpWebhookRoute: ApiPublicMpWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
