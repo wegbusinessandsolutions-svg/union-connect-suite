@@ -49,6 +49,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
+      // Evita que o Google Tradutor (Chrome Android/iOS) traduza a interface
+      // do CRM, o que causava "removeChild ... is not a child of this node"
+      // ao reconciliar o DOM e fazia os nomes dos menus mudarem sozinhos.
+      { name: "google", content: "notranslate" },
+      { httpEquiv: "Content-Language", content: "pt-BR" },
       { title: "União Condominial - Produtos de Limpeza e Conservação" },
       { name: "description", content: "Atendemos as cidades de Goiânia, Aparecida de Goiânia, Senador Canedo e Trindade." },
       { name: "author", content: "Lovable" },
