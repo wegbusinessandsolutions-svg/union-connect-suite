@@ -24,11 +24,19 @@ function CatalogoPage() {
   const products = useQuery({
     queryKey: ["catalog", search],
     queryFn: async () => {
-      let q = supabase.from("products").select("*").eq("is_active", true).order("name").limit(120);
+      let q = supabase
+        .from("products_public" as never)
+        .select("*")
+        .order("name")
+        .limit(120);
       if (search) q = q.or(`name.ilike.%${search}%,sku.ilike.%${search}%,brand.ilike.%${search}%`);
       const { data, error } = await q;
       if (error) throw error;
-      return data;
+      return data as Array<{
+        id: string; name: string; brand: string | null; sku: string | null;
+        image_main_url: string | null; price_sale: number;
+        cashback_pct: number | null; in_stock: boolean;
+      }>;
     },
   });
 
@@ -76,7 +84,7 @@ function CatalogoPage() {
                   {Number(p.cashback_pct ?? 0) > 0 && (
                     <Badge variant="secondary" className="text-xs">{Number(p.cashback_pct).toFixed(1)}% cashback</Badge>
                   )}
-                  {p.stock_qty > 0 ? (
+                  {p.in_stock ? (
                     <Badge variant="outline" className="text-xs">Em estoque</Badge>
                   ) : (
                     <Badge variant="outline" className="text-xs text-destructive">Indisponível</Badge>

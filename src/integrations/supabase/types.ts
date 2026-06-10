@@ -1201,6 +1201,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sale_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sale_order_items_service_id_fkey"
             columns: ["service_id"]
             isOneToOne: false
@@ -1400,6 +1407,13 @@ export type Database = {
             referencedRelation: "products"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       suppliers: {
@@ -1563,7 +1577,56 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      products_public: {
+        Row: {
+          brand: string | null
+          cashback_pct: number | null
+          category_id: string | null
+          created_at: string | null
+          id: string | null
+          image_main_url: string | null
+          in_stock: boolean | null
+          is_active: boolean | null
+          name: string | null
+          price_sale: number | null
+          sku: string | null
+        }
+        Insert: {
+          brand?: string | null
+          cashback_pct?: number | null
+          category_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_main_url?: string | null
+          in_stock?: never
+          is_active?: boolean | null
+          name?: string | null
+          price_sale?: number | null
+          sku?: string | null
+        }
+        Update: {
+          brand?: string | null
+          cashback_pct?: number | null
+          category_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          image_main_url?: string | null
+          in_stock?: never
+          is_active?: boolean | null
+          name?: string | null
+          price_sale?: number | null
+          sku?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "product_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       claim_admin_if_none: { Args: never; Returns: boolean }
