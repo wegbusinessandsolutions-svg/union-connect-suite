@@ -84,7 +84,7 @@ function CatalogoPage() {
                   {Number(p.cashback_pct ?? 0) > 0 && (
                     <Badge variant="secondary" className="text-xs">{Number(p.cashback_pct).toFixed(1)}% cashback</Badge>
                   )}
-                  {p.stock_qty > 0 ? (
+                  {p.in_stock ? (
                     <Badge variant="outline" className="text-xs">Em estoque</Badge>
                   ) : (
                     <Badge variant="outline" className="text-xs text-destructive">Indisponível</Badge>
