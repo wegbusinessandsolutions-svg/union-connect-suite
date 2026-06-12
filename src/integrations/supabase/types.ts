@@ -1577,6 +1577,60 @@ export type Database = {
       }
     }
     Views: {
+      company_public: {
+        Row: {
+          address_city: string | null
+          address_complement: string | null
+          address_district: string | null
+          address_number: string | null
+          address_state: string | null
+          address_street: string | null
+          address_zip: string | null
+          cnpj: string | null
+          email: string | null
+          id: string | null
+          logo_url: string | null
+          nome_fantasia: string | null
+          phone: string | null
+          razao_social: string | null
+          site: string | null
+        }
+        Insert: {
+          address_city?: string | null
+          address_complement?: string | null
+          address_district?: string | null
+          address_number?: string | null
+          address_state?: string | null
+          address_street?: string | null
+          address_zip?: string | null
+          cnpj?: string | null
+          email?: string | null
+          id?: string | null
+          logo_url?: string | null
+          nome_fantasia?: string | null
+          phone?: string | null
+          razao_social?: string | null
+          site?: string | null
+        }
+        Update: {
+          address_city?: string | null
+          address_complement?: string | null
+          address_district?: string | null
+          address_number?: string | null
+          address_state?: string | null
+          address_street?: string | null
+          address_zip?: string | null
+          cnpj?: string | null
+          email?: string | null
+          id?: string | null
+          logo_url?: string | null
+          nome_fantasia?: string | null
+          phone?: string | null
+          razao_social?: string | null
+          site?: string | null
+        }
+        Relationships: []
+      }
       products_public: {
         Row: {
           brand: string | null
