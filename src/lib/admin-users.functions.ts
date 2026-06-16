@@ -255,9 +255,26 @@ export const getUserProfile = createServerFn({ method: "GET" })
     await assertAdmin(context.userId);
     const { data: profile, error } = await supabaseAdmin
       .from("user_profiles")
-      .select("id, name, email, phone, department, is_active")
+      .select("id, name, email, phone, department, avatar_url, is_active, last_login, created_at")
       .eq("id", data.userId)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return { profile };
+    const { data: authData, error: authError } =
+      await supabaseAdmin.auth.admin.getUserById(data.userId);
+    if (authError) throw new Error(authError.message);
+    const u = authData.user;
+    const auth = u
+      ? {
+          email: u.email ?? null,
+          phone: u.phone ?? null,
+          email_confirmed: !!u.email_confirmed_at,
+          phone_confirmed: !!u.phone_confirmed_at,
+          banned: !!(u as { banned_until?: string }).banned_until,
+          last_sign_in_at: u.last_sign_in_at ?? null,
+          created_at: u.created_at,
+          user_metadata: (u.user_metadata ?? {}) as Record<string, unknown>,
+          app_metadata: (u.app_metadata ?? {}) as Record<string, unknown>,
+        }
+      : null;
+    return { profile, auth };
   });
