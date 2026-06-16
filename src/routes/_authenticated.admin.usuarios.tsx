@@ -77,9 +77,19 @@ function UsuariosPage() {
     name: "",
     phone: "",
     department: "",
+    avatar_url: "",
     is_active: true,
     password: "",
+    email_confirm: false,
+    ban: false,
+    user_metadata: "{}",
   });
+  const [editMeta, setEditMeta] = useState<{
+    created_at?: string;
+    last_sign_in_at?: string | null;
+    email_confirmed?: boolean;
+    app_metadata?: string;
+  }>({});
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   async function openEdit(u: UserRow) {
@@ -89,39 +99,66 @@ function UsuariosPage() {
       name: "",
       phone: "",
       department: "",
+      avatar_url: "",
       is_active: true,
       password: "",
+      email_confirm: false,
+      ban: false,
+      user_metadata: "{}",
     });
+    setEditMeta({});
     try {
       const res = await getProfileFn({ data: { userId: u.id } });
       const p = res.profile;
-      if (p) {
-        setEditForm((f) => ({
-          ...f,
-          email: p.email ?? u.email ?? "",
-          name: p.name ?? "",
-          phone: p.phone ?? "",
-          department: p.department ?? "",
-          is_active: p.is_active ?? true,
-        }));
-      }
+      const a = res.auth;
+      setEditForm((f) => ({
+        ...f,
+        email: p?.email ?? a?.email ?? u.email ?? "",
+        name: p?.name ?? "",
+        phone: p?.phone ?? a?.phone ?? "",
+        department: p?.department ?? "",
+        avatar_url: p?.avatar_url ?? "",
+        is_active: p?.is_active ?? true,
+        ban: a?.banned ?? false,
+        user_metadata: a?.user_metadata ?? "{}",
+      }));
+      setEditMeta({
+        created_at: a?.created_at,
+        last_sign_in_at: a?.last_sign_in_at,
+        email_confirmed: a?.email_confirmed,
+        app_metadata: a?.app_metadata,
+      });
     } catch (e) {
       toast.error((e as Error).message);
     }
   }
 
   const updateMut = useMutation({
-    mutationFn: () => updateUserFn({
-      data: {
-        userId: editingUserId!,
-        email: editForm.email || undefined,
-        password: editForm.password || undefined,
-        name: editForm.name,
-        phone: editForm.phone || null,
-        department: editForm.department || null,
-        is_active: editForm.is_active,
-      },
-    }),
+    mutationFn: () => {
+      let metadata: Record<string, unknown> | undefined;
+      if (editForm.user_metadata.trim()) {
+        try {
+          metadata = JSON.parse(editForm.user_metadata);
+        } catch {
+          throw new Error("Metadados de usuário: JSON inválido");
+        }
+      }
+      return updateUserFn({
+        data: {
+          userId: editingUserId!,
+          email: editForm.email || undefined,
+          password: editForm.password || undefined,
+          name: editForm.name,
+          phone: editForm.phone || null,
+          department: editForm.department || null,
+          avatar_url: editForm.avatar_url || null,
+          is_active: editForm.is_active,
+          email_confirm: editForm.email_confirm || undefined,
+          ban: editForm.ban,
+          user_metadata: metadata,
+        },
+      });
+    },
     onSuccess: () => {
       toast.success("Usuário atualizado");
       setEditingUserId(null);
