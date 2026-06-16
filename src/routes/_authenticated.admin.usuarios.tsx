@@ -436,28 +436,42 @@ function UsuariosPage() {
       </div>
 
       <Dialog open={editingUserId !== null} onOpenChange={(o) => !o && setEditingUserId(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editar usuário</DialogTitle>
             <DialogDescription>
-              Atualize os dados do usuário. Deixe a senha em branco para mantê-la.
+              Como administrador, você pode alterar qualquer dado do usuário. Deixe a senha em branco para mantê-la.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">
-            <div className="grid gap-1.5">
-              <Label>E-mail</Label>
-              <Input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label>Nome</Label>
-              <Input
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-              />
+            {(editMeta.created_at || editMeta.last_sign_in_at) && (
+              <div className="grid grid-cols-2 gap-2 rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+                <div>
+                  <span className="font-medium">Criado em:</span>{" "}
+                  {editMeta.created_at ? format(new Date(editMeta.created_at), "dd/MM/yyyy HH:mm") : "—"}
+                </div>
+                <div>
+                  <span className="font-medium">Último login:</span>{" "}
+                  {editMeta.last_sign_in_at ? format(new Date(editMeta.last_sign_in_at), "dd/MM/yyyy HH:mm") : "—"}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>E-mail</Label>
+                <Input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Nome</Label>
+                <Input
+                  value={editForm.name}
+                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1.5">
@@ -474,6 +488,14 @@ function UsuariosPage() {
                   onChange={(e) => setEditForm((f) => ({ ...f, department: e.target.value }))}
                 />
               </div>
+            </div>
+            <div className="grid gap-1.5">
+              <Label>URL do avatar</Label>
+              <Input
+                placeholder="https://…"
+                value={editForm.avatar_url}
+                onChange={(e) => setEditForm((f) => ({ ...f, avatar_url: e.target.value }))}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label>Nova senha (opcional)</Label>
@@ -494,6 +516,51 @@ function UsuariosPage() {
                 onCheckedChange={(v) => setEditForm((f) => ({ ...f, is_active: v }))}
               />
             </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <Label className="text-sm">Bloquear acesso (ban)</Label>
+                <p className="text-xs text-muted-foreground">Impede o login imediatamente.</p>
+              </div>
+              <Switch
+                checked={editForm.ban}
+                onCheckedChange={(v) => setEditForm((f) => ({ ...f, ban: v }))}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <Label className="text-sm">
+                  Confirmar e-mail manualmente
+                  {editMeta.email_confirmed && (
+                    <Badge className="ml-2 bg-green-100 text-green-800">Já confirmado</Badge>
+                  )}
+                </Label>
+                <p className="text-xs text-muted-foreground">Marca o e-mail como verificado ao salvar.</p>
+              </div>
+              <Switch
+                checked={editForm.email_confirm}
+                onCheckedChange={(v) => setEditForm((f) => ({ ...f, email_confirm: v }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Metadados do usuário (JSON)</Label>
+              <Textarea
+                rows={4}
+                className="font-mono text-xs"
+                value={editForm.user_metadata}
+                onChange={(e) => setEditForm((f) => ({ ...f, user_metadata: e.target.value }))}
+              />
+              <p className="text-xs text-muted-foreground">
+                Campos livres armazenados em <code>user_metadata</code>.
+              </p>
+            </div>
+            {editMeta.app_metadata && editMeta.app_metadata !== "{}" && (
+              <div className="grid gap-1.5">
+                <Label className="text-xs text-muted-foreground">App metadata (somente leitura)</Label>
+                <pre className="overflow-x-auto rounded-md border bg-muted/30 p-2 text-xs">
+                  {editMeta.app_metadata}
+                </pre>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingUserId(null)}>Cancelar</Button>
