@@ -165,7 +165,11 @@ const updateUserSchema = z.object({
   name: z.string().trim().max(255).optional(),
   phone: z.string().trim().max(40).optional().nullable(),
   department: z.string().trim().max(120).optional().nullable(),
+  avatar_url: z.string().trim().max(2048).optional().nullable(),
   is_active: z.boolean().optional(),
+  email_confirm: z.boolean().optional(),
+  ban: z.boolean().optional(),
+  user_metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const adminUpdateUser = createServerFn({ method: "POST" })
@@ -173,9 +177,18 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
   .inputValidator((d) => updateUserSchema.parse(d))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    const authAttrs: { email?: string; password?: string } = {};
+    const authAttrs: {
+      email?: string;
+      password?: string;
+      email_confirm?: boolean;
+      ban_duration?: string;
+      user_metadata?: Record<string, unknown>;
+    } = {};
     if (data.email) authAttrs.email = data.email;
     if (data.password) authAttrs.password = data.password;
+    if (data.email_confirm) authAttrs.email_confirm = true;
+    if (data.ban !== undefined) authAttrs.ban_duration = data.ban ? "876000h" : "none";
+    if (data.user_metadata) authAttrs.user_metadata = data.user_metadata;
     if (Object.keys(authAttrs).length > 0) {
       const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, authAttrs);
       if (error) throw new Error(error.message);
@@ -185,12 +198,14 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
       email?: string;
       phone?: string | null;
       department?: string | null;
+      avatar_url?: string | null;
       is_active?: boolean;
     } = {};
     if (data.name !== undefined) profilePatch.name = data.name;
     if (data.email !== undefined) profilePatch.email = data.email;
     if (data.phone !== undefined) profilePatch.phone = data.phone;
     if (data.department !== undefined) profilePatch.department = data.department;
+    if (data.avatar_url !== undefined) profilePatch.avatar_url = data.avatar_url;
     if (data.is_active !== undefined) profilePatch.is_active = data.is_active;
     if (Object.keys(profilePatch).length > 0) {
       const { error } = await supabaseAdmin
