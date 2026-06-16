@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
@@ -77,9 +78,19 @@ function UsuariosPage() {
     name: "",
     phone: "",
     department: "",
+    avatar_url: "",
     is_active: true,
     password: "",
+    email_confirm: false,
+    ban: false,
+    user_metadata: "{}",
   });
+  const [editMeta, setEditMeta] = useState<{
+    created_at?: string;
+    last_sign_in_at?: string | null;
+    email_confirmed?: boolean;
+    app_metadata?: string;
+  }>({});
   const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   async function openEdit(u: UserRow) {
@@ -89,39 +100,66 @@ function UsuariosPage() {
       name: "",
       phone: "",
       department: "",
+      avatar_url: "",
       is_active: true,
       password: "",
+      email_confirm: false,
+      ban: false,
+      user_metadata: "{}",
     });
+    setEditMeta({});
     try {
       const res = await getProfileFn({ data: { userId: u.id } });
       const p = res.profile;
-      if (p) {
-        setEditForm((f) => ({
-          ...f,
-          email: p.email ?? u.email ?? "",
-          name: p.name ?? "",
-          phone: p.phone ?? "",
-          department: p.department ?? "",
-          is_active: p.is_active ?? true,
-        }));
-      }
+      const a = res.auth;
+      setEditForm((f) => ({
+        ...f,
+        email: p?.email ?? a?.email ?? u.email ?? "",
+        name: p?.name ?? "",
+        phone: p?.phone ?? a?.phone ?? "",
+        department: p?.department ?? "",
+        avatar_url: p?.avatar_url ?? "",
+        is_active: p?.is_active ?? true,
+        ban: a?.banned ?? false,
+        user_metadata: a?.user_metadata ?? "{}",
+      }));
+      setEditMeta({
+        created_at: a?.created_at,
+        last_sign_in_at: a?.last_sign_in_at,
+        email_confirmed: a?.email_confirmed,
+        app_metadata: a?.app_metadata,
+      });
     } catch (e) {
       toast.error((e as Error).message);
     }
   }
 
   const updateMut = useMutation({
-    mutationFn: () => updateUserFn({
-      data: {
-        userId: editingUserId!,
-        email: editForm.email || undefined,
-        password: editForm.password || undefined,
-        name: editForm.name,
-        phone: editForm.phone || null,
-        department: editForm.department || null,
-        is_active: editForm.is_active,
-      },
-    }),
+    mutationFn: () => {
+      let metadata: Record<string, unknown> | undefined;
+      if (editForm.user_metadata.trim()) {
+        try {
+          metadata = JSON.parse(editForm.user_metadata);
+        } catch {
+          throw new Error("Metadados de usuário: JSON inválido");
+        }
+      }
+      return updateUserFn({
+        data: {
+          userId: editingUserId!,
+          email: editForm.email || undefined,
+          password: editForm.password || undefined,
+          name: editForm.name,
+          phone: editForm.phone || null,
+          department: editForm.department || null,
+          avatar_url: editForm.avatar_url || null,
+          is_active: editForm.is_active,
+          email_confirm: editForm.email_confirm || undefined,
+          ban: editForm.ban,
+          user_metadata: metadata,
+        },
+      });
+    },
     onSuccess: () => {
       toast.success("Usuário atualizado");
       setEditingUserId(null);
@@ -398,28 +436,42 @@ function UsuariosPage() {
       </div>
 
       <Dialog open={editingUserId !== null} onOpenChange={(o) => !o && setEditingUserId(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Editar usuário</DialogTitle>
             <DialogDescription>
-              Atualize os dados do usuário. Deixe a senha em branco para mantê-la.
+              Como administrador, você pode alterar qualquer dado do usuário. Deixe a senha em branco para mantê-la.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">
-            <div className="grid gap-1.5">
-              <Label>E-mail</Label>
-              <Input
-                type="email"
-                value={editForm.email}
-                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label>Nome</Label>
-              <Input
-                value={editForm.name}
-                onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-              />
+            {(editMeta.created_at || editMeta.last_sign_in_at) && (
+              <div className="grid grid-cols-2 gap-2 rounded-md border bg-muted/30 p-2 text-xs text-muted-foreground">
+                <div>
+                  <span className="font-medium">Criado em:</span>{" "}
+                  {editMeta.created_at ? format(new Date(editMeta.created_at), "dd/MM/yyyy HH:mm") : "—"}
+                </div>
+                <div>
+                  <span className="font-medium">Último login:</span>{" "}
+                  {editMeta.last_sign_in_at ? format(new Date(editMeta.last_sign_in_at), "dd/MM/yyyy HH:mm") : "—"}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label>E-mail</Label>
+                <Input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label>Nome</Label>
+                <Input
+                  value={editForm.name}
+                  onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                />
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1.5">
@@ -436,6 +488,14 @@ function UsuariosPage() {
                   onChange={(e) => setEditForm((f) => ({ ...f, department: e.target.value }))}
                 />
               </div>
+            </div>
+            <div className="grid gap-1.5">
+              <Label>URL do avatar</Label>
+              <Input
+                placeholder="https://…"
+                value={editForm.avatar_url}
+                onChange={(e) => setEditForm((f) => ({ ...f, avatar_url: e.target.value }))}
+              />
             </div>
             <div className="grid gap-1.5">
               <Label>Nova senha (opcional)</Label>
@@ -456,6 +516,51 @@ function UsuariosPage() {
                 onCheckedChange={(v) => setEditForm((f) => ({ ...f, is_active: v }))}
               />
             </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <Label className="text-sm">Bloquear acesso (ban)</Label>
+                <p className="text-xs text-muted-foreground">Impede o login imediatamente.</p>
+              </div>
+              <Switch
+                checked={editForm.ban}
+                onCheckedChange={(v) => setEditForm((f) => ({ ...f, ban: v }))}
+              />
+            </div>
+            <div className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <Label className="text-sm">
+                  Confirmar e-mail manualmente
+                  {editMeta.email_confirmed && (
+                    <Badge className="ml-2 bg-green-100 text-green-800">Já confirmado</Badge>
+                  )}
+                </Label>
+                <p className="text-xs text-muted-foreground">Marca o e-mail como verificado ao salvar.</p>
+              </div>
+              <Switch
+                checked={editForm.email_confirm}
+                onCheckedChange={(v) => setEditForm((f) => ({ ...f, email_confirm: v }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label>Metadados do usuário (JSON)</Label>
+              <Textarea
+                rows={4}
+                className="font-mono text-xs"
+                value={editForm.user_metadata}
+                onChange={(e) => setEditForm((f) => ({ ...f, user_metadata: e.target.value }))}
+              />
+              <p className="text-xs text-muted-foreground">
+                Campos livres armazenados em <code>user_metadata</code>.
+              </p>
+            </div>
+            {editMeta.app_metadata && editMeta.app_metadata !== "{}" && (
+              <div className="grid gap-1.5">
+                <Label className="text-xs text-muted-foreground">App metadata (somente leitura)</Label>
+                <pre className="overflow-x-auto rounded-md border bg-muted/30 p-2 text-xs">
+                  {editMeta.app_metadata}
+                </pre>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingUserId(null)}>Cancelar</Button>
