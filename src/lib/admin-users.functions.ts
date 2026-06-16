@@ -272,8 +272,8 @@ export const getUserProfile = createServerFn({ method: "GET" })
           banned: !!(u as { banned_until?: string }).banned_until,
           last_sign_in_at: u.last_sign_in_at ?? null,
           created_at: u.created_at,
-          user_metadata: (u.user_metadata ?? {}) as Record<string, unknown>,
-          app_metadata: (u.app_metadata ?? {}) as Record<string, unknown>,
+          user_metadata: JSON.stringify(u.user_metadata ?? {}),
+          app_metadata: JSON.stringify(u.app_metadata ?? {}),
         }
       : null;
     return { profile, auth };
