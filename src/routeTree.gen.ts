@@ -44,9 +44,12 @@ import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_auth
 import { Route as AuthenticatedClienteCashbackRouteImport } from './routes/_authenticated.cliente.cashback'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated.admin.relatorios'
+import { Route as AuthenticatedAdminMarcasParceirasRouteImport } from './routes/_authenticated.admin.marcas-parceiras'
+import { Route as AuthenticatedAdminKitsEssenciaisRouteImport } from './routes/_authenticated.admin.kits-essenciais'
 import { Route as AuthenticatedAdminIntegracoesPagamentosRouteImport } from './routes/_authenticated.admin.integracoes-pagamentos'
 import { Route as AuthenticatedAdminFuncionariosRouteImport } from './routes/_authenticated.admin.funcionarios'
 import { Route as AuthenticatedAdminEmpresaRouteImport } from './routes/_authenticated.admin.empresa'
+import { Route as AuthenticatedAdminClubeBeneficiosRouteImport } from './routes/_authenticated.admin.clube-beneficios'
 import { Route as AuthenticatedAdminAuditLogsRouteImport } from './routes/_authenticated.admin.audit-logs'
 
 const UnauthorizedRoute = UnauthorizedRouteImport.update({
@@ -244,6 +247,18 @@ const AuthenticatedAdminRelatoriosRoute =
     path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMarcasParceirasRoute =
+  AuthenticatedAdminMarcasParceirasRouteImport.update({
+    id: '/marcas-parceiras',
+    path: '/marcas-parceiras',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminKitsEssenciaisRoute =
+  AuthenticatedAdminKitsEssenciaisRouteImport.update({
+    id: '/kits-essenciais',
+    path: '/kits-essenciais',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminIntegracoesPagamentosRoute =
   AuthenticatedAdminIntegracoesPagamentosRouteImport.update({
     id: '/integracoes-pagamentos',
@@ -260,6 +275,12 @@ const AuthenticatedAdminEmpresaRoute =
   AuthenticatedAdminEmpresaRouteImport.update({
     id: '/empresa',
     path: '/empresa',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminClubeBeneficiosRoute =
+  AuthenticatedAdminClubeBeneficiosRouteImport.update({
+    id: '/clube-beneficios',
+    path: '/clube-beneficios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAuditLogsRoute =
@@ -282,9 +303,12 @@ export interface FileRoutesByFullPath {
   '/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/clube-beneficios': typeof AuthenticatedAdminClubeBeneficiosRoute
   '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
+  '/admin/kits-essenciais': typeof AuthenticatedAdminKitsEssenciaisRoute
+  '/admin/marcas-parceiras': typeof AuthenticatedAdminMarcasParceirasRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -317,9 +341,12 @@ export interface FileRoutesByTo {
   '/unauthorized': typeof UnauthorizedRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/admin/clube-beneficios': typeof AuthenticatedAdminClubeBeneficiosRoute
   '/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
+  '/admin/kits-essenciais': typeof AuthenticatedAdminKitsEssenciaisRoute
+  '/admin/marcas-parceiras': typeof AuthenticatedAdminMarcasParceirasRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -359,9 +386,12 @@ export interface FileRoutesById {
   '/_authenticated/expedicao': typeof AuthenticatedExpedicaoRouteWithChildren
   '/_authenticated/financeiro': typeof AuthenticatedFinanceiroRouteWithChildren
   '/_authenticated/admin/audit-logs': typeof AuthenticatedAdminAuditLogsRoute
+  '/_authenticated/admin/clube-beneficios': typeof AuthenticatedAdminClubeBeneficiosRoute
   '/_authenticated/admin/empresa': typeof AuthenticatedAdminEmpresaRoute
   '/_authenticated/admin/funcionarios': typeof AuthenticatedAdminFuncionariosRoute
   '/_authenticated/admin/integracoes-pagamentos': typeof AuthenticatedAdminIntegracoesPagamentosRoute
+  '/_authenticated/admin/kits-essenciais': typeof AuthenticatedAdminKitsEssenciaisRoute
+  '/_authenticated/admin/marcas-parceiras': typeof AuthenticatedAdminMarcasParceirasRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
@@ -401,9 +431,12 @@ export interface FileRouteTypes {
     | '/expedicao'
     | '/financeiro'
     | '/admin/audit-logs'
+    | '/admin/clube-beneficios'
     | '/admin/empresa'
     | '/admin/funcionarios'
     | '/admin/integracoes-pagamentos'
+    | '/admin/kits-essenciais'
+    | '/admin/marcas-parceiras'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
@@ -436,9 +469,12 @@ export interface FileRouteTypes {
     | '/unauthorized'
     | '/dashboard'
     | '/admin/audit-logs'
+    | '/admin/clube-beneficios'
     | '/admin/empresa'
     | '/admin/funcionarios'
     | '/admin/integracoes-pagamentos'
+    | '/admin/kits-essenciais'
+    | '/admin/marcas-parceiras'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/cliente/cashback'
@@ -477,9 +513,12 @@ export interface FileRouteTypes {
     | '/_authenticated/expedicao'
     | '/_authenticated/financeiro'
     | '/_authenticated/admin/audit-logs'
+    | '/_authenticated/admin/clube-beneficios'
     | '/_authenticated/admin/empresa'
     | '/_authenticated/admin/funcionarios'
     | '/_authenticated/admin/integracoes-pagamentos'
+    | '/_authenticated/admin/kits-essenciais'
+    | '/_authenticated/admin/marcas-parceiras'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/cliente/cashback'
@@ -762,6 +801,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/marcas-parceiras': {
+      id: '/_authenticated/admin/marcas-parceiras'
+      path: '/marcas-parceiras'
+      fullPath: '/admin/marcas-parceiras'
+      preLoaderRoute: typeof AuthenticatedAdminMarcasParceirasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/kits-essenciais': {
+      id: '/_authenticated/admin/kits-essenciais'
+      path: '/kits-essenciais'
+      fullPath: '/admin/kits-essenciais'
+      preLoaderRoute: typeof AuthenticatedAdminKitsEssenciaisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/integracoes-pagamentos': {
       id: '/_authenticated/admin/integracoes-pagamentos'
       path: '/integracoes-pagamentos'
@@ -783,6 +836,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminEmpresaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/clube-beneficios': {
+      id: '/_authenticated/admin/clube-beneficios'
+      path: '/clube-beneficios'
+      fullPath: '/admin/clube-beneficios'
+      preLoaderRoute: typeof AuthenticatedAdminClubeBeneficiosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/audit-logs': {
       id: '/_authenticated/admin/audit-logs'
       path: '/audit-logs'
@@ -795,9 +855,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAuditLogsRoute: typeof AuthenticatedAdminAuditLogsRoute
+  AuthenticatedAdminClubeBeneficiosRoute: typeof AuthenticatedAdminClubeBeneficiosRoute
   AuthenticatedAdminEmpresaRoute: typeof AuthenticatedAdminEmpresaRoute
   AuthenticatedAdminFuncionariosRoute: typeof AuthenticatedAdminFuncionariosRoute
   AuthenticatedAdminIntegracoesPagamentosRoute: typeof AuthenticatedAdminIntegracoesPagamentosRoute
+  AuthenticatedAdminKitsEssenciaisRoute: typeof AuthenticatedAdminKitsEssenciaisRoute
+  AuthenticatedAdminMarcasParceirasRoute: typeof AuthenticatedAdminMarcasParceirasRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -805,10 +868,15 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAuditLogsRoute: AuthenticatedAdminAuditLogsRoute,
+  AuthenticatedAdminClubeBeneficiosRoute:
+    AuthenticatedAdminClubeBeneficiosRoute,
   AuthenticatedAdminEmpresaRoute: AuthenticatedAdminEmpresaRoute,
   AuthenticatedAdminFuncionariosRoute: AuthenticatedAdminFuncionariosRoute,
   AuthenticatedAdminIntegracoesPagamentosRoute:
     AuthenticatedAdminIntegracoesPagamentosRoute,
+  AuthenticatedAdminKitsEssenciaisRoute: AuthenticatedAdminKitsEssenciaisRoute,
+  AuthenticatedAdminMarcasParceirasRoute:
+    AuthenticatedAdminMarcasParceirasRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
