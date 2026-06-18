@@ -300,6 +300,45 @@ export type Database = {
           },
         ]
       }
+      clube_beneficios: {
+        Row: {
+          benefit_type: string | null
+          created_at: string
+          description: string | null
+          discount_value: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          terms: string | null
+          updated_at: string
+        }
+        Insert: {
+          benefit_type?: string | null
+          created_at?: string
+          description?: string | null
+          discount_value?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          terms?: string | null
+          updated_at?: string
+        }
+        Update: {
+          benefit_type?: string | null
+          created_at?: string
+          description?: string | null
+          discount_value?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          terms?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       company: {
         Row: {
           address_city: string | null
@@ -596,6 +635,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      kits_essenciais: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          items: Json
+          name: string
+          price: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          items?: Json
+          name: string
+          price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          items?: Json
+          name?: string
+          price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marcas_parceiras: {
+        Row: {
+          created_at: string
+          description: string | null
+          discount_pct: number | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          discount_pct?: number | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          discount_pct?: number | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
       }
       payables: {
         Row: {
