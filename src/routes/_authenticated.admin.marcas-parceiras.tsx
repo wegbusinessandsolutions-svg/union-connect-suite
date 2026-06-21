@@ -231,8 +231,16 @@ function MarcaDialog({ marca, onClose, onSaved }: { marca: Marca | null; onClose
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nome *"><Input {...form.register("name", { required: true })} /></Field>
             <Field label="Desconto (%)"><Input type="number" step="0.01" {...form.register("discount_pct")} /></Field>
-            <Field label="Logo (URL)"><Input {...form.register("logo_url")} /></Field>
-            <Field label="Website"><Input {...form.register("website")} /></Field>
+            <Field label="Website" className="md:col-span-2"><Input {...form.register("website")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Logo da marca"
+                value={form.watch("logo_url") || null}
+                onChange={(p) => form.setValue("logo_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <div className="flex items-center gap-2">
               <Switch checked={form.watch("is_active")} onCheckedChange={(v) => form.setValue("is_active", v)} />
