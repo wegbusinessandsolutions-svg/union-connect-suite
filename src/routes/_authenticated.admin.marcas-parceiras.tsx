@@ -130,7 +130,11 @@ function MarcasPage() {
                   <TableRow key={m.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        {m.logo_url && <img src={m.logo_url} alt={m.name} className="h-8 w-8 rounded object-contain" />}
+                        {m.logo_url && logoUrls[m.logo_url] ? (
+                          <img src={logoUrls[m.logo_url]} alt={m.name} className="h-10 w-10 rounded border object-contain" />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                        )}
                         <div>
                           <div className="font-medium">{m.name}</div>
                           <div className="max-w-xs truncate text-xs text-muted-foreground">{m.description ?? "—"}</div>
