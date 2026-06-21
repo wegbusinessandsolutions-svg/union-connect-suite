@@ -65,6 +65,8 @@ function MarcasPage() {
     },
   });
 
+  const logoUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((m) => m.logo_url));
+
   const delMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("marcas_parceiras").delete().eq("id", id);
