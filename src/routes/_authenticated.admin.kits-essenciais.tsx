@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Package } from "lucid
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { ImageUploader, useSignedUrlsMap } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldAlert } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+
+const BUCKET = "admin-assets";
+const FOLDER = "kits";
 
 type Kit = Tables<"kits_essenciais">;
 
