@@ -123,15 +123,23 @@ function ClubePage() {
           <CardContent className="overflow-x-auto p-0">
             <Table>
               <TableHeader><TableRow>
+                <TableHead className="w-[70px]">Imagem</TableHead>
                 <TableHead>Benefício</TableHead><TableHead>Tipo</TableHead><TableHead>Valor</TableHead>
                 <TableHead>Status</TableHead><TableHead className="text-right">Ações</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {(list.data ?? []).length === 0 && !list.isLoading && (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">Nenhum benefício cadastrado.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum benefício cadastrado.</TableCell></TableRow>
                 )}
                 {(list.data ?? []).map((b) => (
                   <TableRow key={b.id}>
+                    <TableCell>
+                      {b.image_url && imgUrls[b.image_url] ? (
+                        <img src={imgUrls[b.image_url]} alt={b.name} className="h-12 w-12 rounded border object-cover" />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="font-medium">{b.name}</div>
                       <div className="max-w-xs truncate text-xs text-muted-foreground">{b.description ?? "—"}</div>
