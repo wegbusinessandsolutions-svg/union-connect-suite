@@ -247,7 +247,15 @@ function BeneficioDialog({ beneficio, onClose, onSaved }: { beneficio: Beneficio
               </Select>
             </Field>
             <Field label="Valor"><Input type="number" step="0.01" {...form.register("discount_value")} /></Field>
-            <Field label="Imagem (URL)"><Input {...form.register("image_url")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Imagem do benefício"
+                value={form.watch("image_url") || null}
+                onChange={(p) => form.setValue("image_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <Field label="Regras / termos" className="md:col-span-2"><Textarea rows={3} {...form.register("terms")} /></Field>
             <div className="flex items-center gap-2">
