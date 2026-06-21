@@ -122,9 +122,13 @@ function KitsPage() {
           <CardContent className="overflow-x-auto p-0">
             <Table>
               <TableHeader><TableRow>
+                <TableHead className="w-[70px]">Imagem</TableHead>
                 <TableHead>Nome</TableHead><TableHead>Descrição</TableHead><TableHead>Preço</TableHead>
                 <TableHead>Itens</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Ações</TableHead>
               </TableRow></TableHeader>
+              <TableBody>
+                {(list.data ?? []).length === 0 && !list.isLoading && (
+                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
               <TableBody>
                 {(list.data ?? []).length === 0 && !list.isLoading && (
                   <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
