@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Handshake, ShieldAler
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { ImageUploader, useSignedUrlsMap } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Tables } from "@/integrations/supabase/types";
+
+const BUCKET = "admin-assets";
+const FOLDER = "marcas";
 
 type Marca = Tables<"marcas_parceiras">;
 
