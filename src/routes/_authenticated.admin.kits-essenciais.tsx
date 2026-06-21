@@ -129,12 +129,16 @@ function KitsPage() {
               <TableBody>
                 {(list.data ?? []).length === 0 && !list.isLoading && (
                   <TableRow><TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
-              <TableBody>
-                {(list.data ?? []).length === 0 && !list.isLoading && (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
                 )}
                 {(list.data ?? []).map((k) => (
                   <TableRow key={k.id}>
+                    <TableCell>
+                      {k.image_url && imgUrls[k.image_url] ? (
+                        <img src={imgUrls[k.image_url]} alt={k.name} className="h-12 w-12 rounded border object-cover" />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{k.name}</TableCell>
                     <TableCell className="max-w-xs truncate text-sm text-muted-foreground">{k.description ?? "—"}</TableCell>
                     <TableCell className="text-sm">{k.price ? `R$ ${Number(k.price).toFixed(2)}` : "—"}</TableCell>
