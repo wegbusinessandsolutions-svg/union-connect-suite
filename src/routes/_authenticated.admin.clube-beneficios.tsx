@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Gift, ShieldAlert } f
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { ImageUploader, useSignedUrlsMap } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Tables } from "@/integrations/supabase/types";
+
+const BUCKET = "admin-assets";
+const FOLDER = "clube";
 
 type Beneficio = Tables<"clube_beneficios">;
 
@@ -62,6 +66,8 @@ function ClubePage() {
       return data as Beneficio[];
     },
   });
+
+  const imgUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((b) => b.image_url));
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
@@ -117,15 +123,23 @@ function ClubePage() {
           <CardContent className="overflow-x-auto p-0">
             <Table>
               <TableHeader><TableRow>
+                <TableHead className="w-[70px]">Imagem</TableHead>
                 <TableHead>Benefício</TableHead><TableHead>Tipo</TableHead><TableHead>Valor</TableHead>
                 <TableHead>Status</TableHead><TableHead className="text-right">Ações</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {(list.data ?? []).length === 0 && !list.isLoading && (
-                  <TableRow><TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">Nenhum benefício cadastrado.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum benefício cadastrado.</TableCell></TableRow>
                 )}
                 {(list.data ?? []).map((b) => (
                   <TableRow key={b.id}>
+                    <TableCell>
+                      {b.image_url && imgUrls[b.image_url] ? (
+                        <img src={imgUrls[b.image_url]} alt={b.name} className="h-12 w-12 rounded border object-cover" />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <div className="font-medium">{b.name}</div>
                       <div className="max-w-xs truncate text-xs text-muted-foreground">{b.description ?? "—"}</div>
@@ -233,7 +247,15 @@ function BeneficioDialog({ beneficio, onClose, onSaved }: { beneficio: Beneficio
               </Select>
             </Field>
             <Field label="Valor"><Input type="number" step="0.01" {...form.register("discount_value")} /></Field>
-            <Field label="Imagem (URL)"><Input {...form.register("image_url")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Imagem do benefício"
+                value={form.watch("image_url") || null}
+                onChange={(p) => form.setValue("image_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <Field label="Regras / termos" className="md:col-span-2"><Textarea rows={3} {...form.register("terms")} /></Field>
             <div className="flex items-center gap-2">

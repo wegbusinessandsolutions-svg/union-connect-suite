@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Handshake, ShieldAler
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { ImageUploader, useSignedUrlsMap } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +19,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { Tables } from "@/integrations/supabase/types";
+
+const BUCKET = "admin-assets";
+const FOLDER = "marcas";
 
 type Marca = Tables<"marcas_parceiras">;
 
@@ -60,6 +64,8 @@ function MarcasPage() {
       return data as Marca[];
     },
   });
+
+  const logoUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((m) => m.logo_url));
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
@@ -126,7 +132,11 @@ function MarcasPage() {
                   <TableRow key={m.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        {m.logo_url && <img src={m.logo_url} alt={m.name} className="h-8 w-8 rounded object-contain" />}
+                        {m.logo_url && logoUrls[m.logo_url] ? (
+                          <img src={logoUrls[m.logo_url]} alt={m.name} className="h-10 w-10 rounded border object-contain" />
+                        ) : (
+                          <div className="flex h-10 w-10 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                        )}
                         <div>
                           <div className="font-medium">{m.name}</div>
                           <div className="max-w-xs truncate text-xs text-muted-foreground">{m.description ?? "—"}</div>
@@ -221,8 +231,16 @@ function MarcaDialog({ marca, onClose, onSaved }: { marca: Marca | null; onClose
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nome *"><Input {...form.register("name", { required: true })} /></Field>
             <Field label="Desconto (%)"><Input type="number" step="0.01" {...form.register("discount_pct")} /></Field>
-            <Field label="Logo (URL)"><Input {...form.register("logo_url")} /></Field>
-            <Field label="Website"><Input {...form.register("website")} /></Field>
+            <Field label="Website" className="md:col-span-2"><Input {...form.register("website")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Logo da marca"
+                value={form.watch("logo_url") || null}
+                onChange={(p) => form.setValue("logo_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <div className="flex items-center gap-2">
               <Switch checked={form.watch("is_active")} onCheckedChange={(v) => form.setValue("is_active", v)} />

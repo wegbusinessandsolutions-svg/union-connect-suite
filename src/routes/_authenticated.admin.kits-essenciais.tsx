@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2, Search, RefreshCw, Loader2, Package } from "lucid
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { ImageUploader, useSignedUrlsMap } from "@/components/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,9 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ShieldAlert } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
+
+const BUCKET = "admin-assets";
+const FOLDER = "kits";
 
 type Kit = Tables<"kits_essenciais">;
 
@@ -61,6 +65,8 @@ function KitsPage() {
       return data as Kit[];
     },
   });
+
+  const imgUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((k) => k.image_url));
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
@@ -116,15 +122,23 @@ function KitsPage() {
           <CardContent className="overflow-x-auto p-0">
             <Table>
               <TableHeader><TableRow>
+                <TableHead className="w-[70px]">Imagem</TableHead>
                 <TableHead>Nome</TableHead><TableHead>Descrição</TableHead><TableHead>Preço</TableHead>
                 <TableHead>Itens</TableHead><TableHead>Status</TableHead><TableHead className="text-right">Ações</TableHead>
               </TableRow></TableHeader>
               <TableBody>
                 {(list.data ?? []).length === 0 && !list.isLoading && (
-                  <TableRow><TableCell colSpan={6} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="py-8 text-center text-sm text-muted-foreground">Nenhum kit cadastrado.</TableCell></TableRow>
                 )}
                 {(list.data ?? []).map((k) => (
                   <TableRow key={k.id}>
+                    <TableCell>
+                      {k.image_url && imgUrls[k.image_url] ? (
+                        <img src={imgUrls[k.image_url]} alt={k.name} className="h-12 w-12 rounded border object-cover" />
+                      ) : (
+                        <div className="flex h-12 w-12 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">—</div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium">{k.name}</TableCell>
                     <TableCell className="max-w-xs truncate text-sm text-muted-foreground">{k.description ?? "—"}</TableCell>
                     <TableCell className="text-sm">{k.price ? `R$ ${Number(k.price).toFixed(2)}` : "—"}</TableCell>
@@ -218,7 +232,15 @@ function KitDialog({ kit, onClose, onSaved }: { kit: Kit | null; onClose: () => 
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nome *"><Input {...form.register("name", { required: true })} /></Field>
             <Field label="Preço (R$)"><Input type="number" step="0.01" {...form.register("price")} /></Field>
-            <Field label="Imagem (URL)" className="md:col-span-2"><Input {...form.register("image_url")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Imagem do kit"
+                value={form.watch("image_url") || null}
+                onChange={(p) => form.setValue("image_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <Field label="Itens (JSON)" className="md:col-span-2">
               <Textarea rows={5} className="font-mono text-xs" {...form.register("items")} />
