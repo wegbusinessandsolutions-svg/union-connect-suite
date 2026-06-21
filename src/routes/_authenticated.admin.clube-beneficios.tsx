@@ -67,6 +67,8 @@ function ClubePage() {
     },
   });
 
+  const imgUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((b) => b.image_url));
+
   const delMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("clube_beneficios").delete().eq("id", id);
