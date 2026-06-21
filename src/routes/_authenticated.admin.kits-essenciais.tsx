@@ -66,6 +66,8 @@ function KitsPage() {
     },
   });
 
+  const imgUrls = useSignedUrlsMap(BUCKET, (list.data ?? []).map((k) => k.image_url));
+
   const delMut = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("kits_essenciais").delete().eq("id", id);
