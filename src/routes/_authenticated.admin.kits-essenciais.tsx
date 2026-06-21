@@ -232,7 +232,15 @@ function KitDialog({ kit, onClose, onSaved }: { kit: Kit | null; onClose: () => 
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Nome *"><Input {...form.register("name", { required: true })} /></Field>
             <Field label="Preço (R$)"><Input type="number" step="0.01" {...form.register("price")} /></Field>
-            <Field label="Imagem (URL)" className="md:col-span-2"><Input {...form.register("image_url")} /></Field>
+            <div className="md:col-span-2">
+              <ImageUploader
+                bucket={BUCKET}
+                folder={FOLDER}
+                label="Imagem do kit"
+                value={form.watch("image_url") || null}
+                onChange={(p) => form.setValue("image_url", p ?? "")}
+              />
+            </div>
             <Field label="Descrição" className="md:col-span-2"><Textarea rows={3} {...form.register("description")} /></Field>
             <Field label="Itens (JSON)" className="md:col-span-2">
               <Textarea rows={5} className="font-mono text-xs" {...form.register("items")} />
