@@ -39,6 +39,7 @@ import { Route as AuthenticatedComercialPedidosRouteImport } from './routes/_aut
 import { Route as AuthenticatedComercialClientesRouteImport } from './routes/_authenticated.comercial.clientes'
 import { Route as AuthenticatedComercialCategoriasRouteImport } from './routes/_authenticated.comercial.categorias'
 import { Route as AuthenticatedClientePedidosRouteImport } from './routes/_authenticated.cliente.pedidos'
+import { Route as AuthenticatedClienteMarcasParceirasRouteImport } from './routes/_authenticated.cliente.marcas-parceiras'
 import { Route as AuthenticatedClienteDadosRouteImport } from './routes/_authenticated.cliente.dados'
 import { Route as AuthenticatedClienteCatalogoRouteImport } from './routes/_authenticated.cliente.catalogo'
 import { Route as AuthenticatedClienteCashbackRouteImport } from './routes/_authenticated.cliente.cashback'
@@ -217,6 +218,12 @@ const AuthenticatedClientePedidosRoute =
     path: '/pedidos',
     getParentRoute: () => AuthenticatedClienteRoute,
   } as any)
+const AuthenticatedClienteMarcasParceirasRoute =
+  AuthenticatedClienteMarcasParceirasRouteImport.update({
+    id: '/marcas-parceiras',
+    path: '/marcas-parceiras',
+    getParentRoute: () => AuthenticatedClienteRoute,
+  } as any)
 const AuthenticatedClienteDadosRoute =
   AuthenticatedClienteDadosRouteImport.update({
     id: '/dados',
@@ -314,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
   '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/cliente/marcas-parceiras': typeof AuthenticatedClienteMarcasParceirasRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -352,6 +360,7 @@ export interface FileRoutesByTo {
   '/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
   '/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/cliente/marcas-parceiras': typeof AuthenticatedClienteMarcasParceirasRoute
   '/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -397,6 +406,7 @@ export interface FileRoutesById {
   '/_authenticated/cliente/cashback': typeof AuthenticatedClienteCashbackRoute
   '/_authenticated/cliente/catalogo': typeof AuthenticatedClienteCatalogoRoute
   '/_authenticated/cliente/dados': typeof AuthenticatedClienteDadosRoute
+  '/_authenticated/cliente/marcas-parceiras': typeof AuthenticatedClienteMarcasParceirasRoute
   '/_authenticated/cliente/pedidos': typeof AuthenticatedClientePedidosRoute
   '/_authenticated/comercial/categorias': typeof AuthenticatedComercialCategoriasRoute
   '/_authenticated/comercial/clientes': typeof AuthenticatedComercialClientesRoute
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/cliente/cashback'
     | '/cliente/catalogo'
     | '/cliente/dados'
+    | '/cliente/marcas-parceiras'
     | '/cliente/pedidos'
     | '/comercial/categorias'
     | '/comercial/clientes'
@@ -480,6 +491,7 @@ export interface FileRouteTypes {
     | '/cliente/cashback'
     | '/cliente/catalogo'
     | '/cliente/dados'
+    | '/cliente/marcas-parceiras'
     | '/cliente/pedidos'
     | '/comercial/categorias'
     | '/comercial/clientes'
@@ -524,6 +536,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cliente/cashback'
     | '/_authenticated/cliente/catalogo'
     | '/_authenticated/cliente/dados'
+    | '/_authenticated/cliente/marcas-parceiras'
     | '/_authenticated/cliente/pedidos'
     | '/_authenticated/comercial/categorias'
     | '/_authenticated/comercial/clientes'
@@ -766,6 +779,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientePedidosRouteImport
       parentRoute: typeof AuthenticatedClienteRoute
     }
+    '/_authenticated/cliente/marcas-parceiras': {
+      id: '/_authenticated/cliente/marcas-parceiras'
+      path: '/marcas-parceiras'
+      fullPath: '/cliente/marcas-parceiras'
+      preLoaderRoute: typeof AuthenticatedClienteMarcasParceirasRouteImport
+      parentRoute: typeof AuthenticatedClienteRoute
+    }
     '/_authenticated/cliente/dados': {
       id: '/_authenticated/cliente/dados'
       path: '/dados'
@@ -889,6 +909,7 @@ interface AuthenticatedClienteRouteChildren {
   AuthenticatedClienteCashbackRoute: typeof AuthenticatedClienteCashbackRoute
   AuthenticatedClienteCatalogoRoute: typeof AuthenticatedClienteCatalogoRoute
   AuthenticatedClienteDadosRoute: typeof AuthenticatedClienteDadosRoute
+  AuthenticatedClienteMarcasParceirasRoute: typeof AuthenticatedClienteMarcasParceirasRoute
   AuthenticatedClientePedidosRoute: typeof AuthenticatedClientePedidosRoute
   AuthenticatedClienteIndexRoute: typeof AuthenticatedClienteIndexRoute
 }
@@ -897,6 +918,8 @@ const AuthenticatedClienteRouteChildren: AuthenticatedClienteRouteChildren = {
   AuthenticatedClienteCashbackRoute: AuthenticatedClienteCashbackRoute,
   AuthenticatedClienteCatalogoRoute: AuthenticatedClienteCatalogoRoute,
   AuthenticatedClienteDadosRoute: AuthenticatedClienteDadosRoute,
+  AuthenticatedClienteMarcasParceirasRoute:
+    AuthenticatedClienteMarcasParceirasRoute,
   AuthenticatedClientePedidosRoute: AuthenticatedClientePedidosRoute,
   AuthenticatedClienteIndexRoute: AuthenticatedClienteIndexRoute,
 }
