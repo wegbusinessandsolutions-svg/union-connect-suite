@@ -53,8 +53,11 @@ function ClienteDadosPage() {
       name: "", phone: "", whatsapp: "", cpf_cnpj: "",
       address_zip: "", address_street: "", address_number: "", address_complement: "",
       address_district: "", address_city: "", address_state: "",
+      resp1_name: "", resp1_cpf: "", resp1_phone: "", resp1_email: "",
     },
   });
+
+  const isPj = client.data?.type === "pj";
 
   useEffect(() => {
     if (client.data) {
@@ -70,6 +73,10 @@ function ClienteDadosPage() {
         address_district: client.data.address_district ?? "",
         address_city: client.data.address_city ?? "",
         address_state: client.data.address_state ?? "",
+        resp1_name: client.data.resp1_name ?? "",
+        resp1_cpf: client.data.resp1_cpf ?? "",
+        resp1_phone: client.data.resp1_phone ?? "",
+        resp1_email: client.data.resp1_email ?? "",
       });
     }
   }, [client.data, form]);
