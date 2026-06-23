@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Package, Search } from "lucide-react";
+import { Package, Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useSignedUrlsMap } from "@/components/image-uploader";
 
 export const Route = createFileRoute("/_authenticated/cliente/catalogo")({
   head: () => ({ meta: [{ title: "Catálogo" }] }),
@@ -15,14 +17,30 @@ export const Route = createFileRoute("/_authenticated/cliente/catalogo")({
 function CatalogoPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState<string | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput.trim()), 300);
     return () => clearTimeout(t);
   }, [searchInput]);
 
+  const categories = useQuery({
+    queryKey: ["catalog-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_categories")
+        .select("id, name, image_url")
+        .order("name");
+      if (error) throw error;
+      return data as Array<{ id: string; name: string; image_url: string | null }>;
+    },
+  });
+
+  const cats = categories.data ?? [];
+  const catSigned = useSignedUrlsMap("category-images", cats.map((c) => c.image_url));
+
   const products = useQuery({
-    queryKey: ["catalog", search],
+    queryKey: ["catalog", search, categoryId],
     queryFn: async () => {
       let q = supabase
         .from("products_public" as never)
@@ -30,6 +48,7 @@ function CatalogoPage() {
         .order("name")
         .limit(120);
       if (search) q = q.or(`name.ilike.%${search}%,sku.ilike.%${search}%,brand.ilike.%${search}%`);
+      if (categoryId) q = q.eq("category_id", categoryId);
       const { data, error } = await q;
       if (error) throw error;
       return data as Array<{
@@ -56,6 +75,44 @@ function CatalogoPage() {
             <Input placeholder="Buscar…" value={searchInput} onChange={(e) => setSearchInput(e.target.value)} className="w-72 pl-8" />
           </div>
         </div>
+
+        {cats.length > 0 && (
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Compre por categoria</h2>
+              {categoryId && (
+                <Button variant="ghost" size="sm" onClick={() => setCategoryId(null)}>
+                  <X className="mr-1 h-4 w-4" /> Limpar filtro
+                </Button>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+              {cats.map((c) => {
+                const url = c.image_url ? catSigned[c.image_url] : null;
+                const active = categoryId === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setCategoryId(active ? null : c.id)}
+                    className={`group flex flex-col items-center gap-2 rounded-lg border bg-card p-2 text-center transition hover:shadow-md ${active ? "ring-2 ring-primary" : ""}`}
+                  >
+                    <div className="aspect-square w-full overflow-hidden rounded-md bg-muted">
+                      {url ? (
+                        <img src={url} alt={c.name} className="h-full w-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-muted-foreground">
+                          <Package className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+                    <span className="line-clamp-2 text-xs font-medium">{c.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {products.isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
         {!products.isLoading && (products.data ?? []).length === 0 && (
