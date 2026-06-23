@@ -29,6 +29,10 @@ type FormValues = {
   address_district: string;
   address_city: string;
   address_state: string;
+  resp1_name: string;
+  resp1_cpf: string;
+  resp1_phone: string;
+  resp1_email: string;
 };
 
 function ClienteDadosPage() {
