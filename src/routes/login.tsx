@@ -105,8 +105,6 @@ function SignInForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-import { formatCpf, formatCnpj, formatPhone, formatCep, onlyDigits } from "@/lib/br-format";
-
 const signUpSchema = z.object({
   type: z.enum(["pf", "pj"], { errorMap: () => ({ message: "Selecione o tipo" }) }),
   name: z.string().trim().min(2, "Informe o nome").max(120),
