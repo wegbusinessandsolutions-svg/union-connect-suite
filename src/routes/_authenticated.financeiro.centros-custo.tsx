@@ -3,11 +3,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Pencil, Trash2, RefreshCw, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, RefreshCw, Loader2, Printer, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ReportActions } from "@/components/report-actions";
-import { costCenterReport } from "@/lib/report-builders";
+import { costCenterReport, allCostCentersReport } from "@/lib/report-builders";
+import { printReport, downloadReportPdf } from "@/lib/report";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,7 +73,21 @@ function CostCentersPage() {
             <h1 className="text-2xl font-bold tracking-tight">Centros de Custo</h1>
             <p className="text-sm text-muted-foreground">Classificação financeira de receitas e despesas.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              disabled={!list.data?.length}
+              onClick={() => list.data && printReport(allCostCentersReport(list.data))}
+            >
+              <Printer className="mr-2 h-4 w-4" /> Imprimir todos
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!list.data?.length}
+              onClick={() => list.data && downloadReportPdf(allCostCentersReport(list.data), "centros-de-custo")}
+            >
+              <FileDown className="mr-2 h-4 w-4" /> PDF detalhado
+            </Button>
             <Button variant="outline" onClick={() => list.refetch()}>
               <RefreshCw className="mr-2 h-4 w-4" /> Atualizar
             </Button>

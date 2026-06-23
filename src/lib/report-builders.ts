@@ -359,6 +359,34 @@ export function costCenterReport(c: Tables<"cost_centers">): ReportData {
   };
 }
 
+export function allCostCentersReport(items: Tables<"cost_centers">[]): ReportData {
+  const byId = new Map(items.map((i) => [i.id, i] as const));
+  const parentName = (pid: string | null) => (pid ? byId.get(pid)?.name ?? "—" : "—");
+  return {
+    title: "Centros de Custo — Relatório Detalhado",
+    subtitle: `${items.length} centro(s) cadastrado(s)`,
+    sections: items.map((c) => ({
+      title: c.name,
+      fields: [
+        { label: "Nome", value: c.name },
+        { label: "Categoria", value: c.category },
+        { label: "Centro pai", value: parentName(c.parent_id) },
+        { label: "Status", value: c.is_active ? "Ativo" : "Inativo" },
+        { label: "ID", value: c.id },
+        { label: "Criado em", value: datetime((c as { created_at?: string | null }).created_at) },
+        { label: "Atualizado em", value: datetime((c as { updated_at?: string | null }).updated_at) },
+      ],
+    })),
+    tables: [
+      {
+        title: "Resumo geral",
+        columns: ["Nome", "Categoria", "Pai", "Status"],
+        rows: items.map((c) => [c.name, c.category, parentName(c.parent_id), c.is_active ? "Ativo" : "Inativo"]),
+      },
+    ],
+  };
+}
+
 export function payableReport(p: Tables<"payables">): ReportData {
   return {
     title: `Conta a Pagar — ${p.description ?? p.id.slice(0, 8)}`,
