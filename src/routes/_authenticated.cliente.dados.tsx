@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatCpfCnpj, formatCpf, formatPhone, formatCep } from "@/lib/br-format";
 
 export const Route = createFileRoute("/_authenticated/cliente/dados")({
   head: () => ({ meta: [{ title: "Meus dados" }] }),
