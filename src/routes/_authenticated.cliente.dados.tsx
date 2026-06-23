@@ -121,22 +121,79 @@ function ClienteDadosPage() {
                 <TabsList>
                   <TabsTrigger value="pessoal">Pessoal</TabsTrigger>
                   <TabsTrigger value="endereco">Endereço</TabsTrigger>
+                  {isPj && <TabsTrigger value="responsavel">Responsável</TabsTrigger>}
                 </TabsList>
                 <TabsContent value="pessoal" className="grid gap-3 pt-4 md:grid-cols-2">
                   <Field label="Nome *"><Input {...form.register("name", { required: true })} /></Field>
-                  <Field label="CPF / CNPJ"><Input {...form.register("cpf_cnpj")} /></Field>
-                  <Field label="Telefone"><Input {...form.register("phone")} /></Field>
-                  <Field label="WhatsApp"><Input {...form.register("whatsapp")} /></Field>
+                  <Field label={isPj ? "CNPJ" : "CPF"}>
+                    <Input
+                      inputMode="numeric"
+                      placeholder={isPj ? "00.000.000/0000-00" : "000.000.000-00"}
+                      value={form.watch("cpf_cnpj") ?? ""}
+                      onChange={(e) => form.setValue("cpf_cnpj", formatCpfCnpj(e.target.value))}
+                    />
+                  </Field>
+                  <Field label="Telefone">
+                    <Input
+                      placeholder="(00) 00000-0000"
+                      value={form.watch("phone") ?? ""}
+                      onChange={(e) => form.setValue("phone", formatPhone(e.target.value))}
+                    />
+                  </Field>
+                  <Field label="WhatsApp">
+                    <Input
+                      placeholder="(00) 00000-0000"
+                      value={form.watch("whatsapp") ?? ""}
+                      onChange={(e) => form.setValue("whatsapp", formatPhone(e.target.value))}
+                    />
+                  </Field>
                 </TabsContent>
                 <TabsContent value="endereco" className="grid gap-3 pt-4 md:grid-cols-3">
-                  <Field label="CEP"><Input {...form.register("address_zip")} /></Field>
+                  <Field label="CEP">
+                    <Input
+                      placeholder="00000-000"
+                      value={form.watch("address_zip") ?? ""}
+                      onChange={(e) => form.setValue("address_zip", formatCep(e.target.value))}
+                    />
+                  </Field>
                   <Field label="Rua" className="md:col-span-2"><Input {...form.register("address_street")} /></Field>
                   <Field label="Número"><Input {...form.register("address_number")} /></Field>
                   <Field label="Complemento"><Input {...form.register("address_complement")} /></Field>
                   <Field label="Bairro"><Input {...form.register("address_district")} /></Field>
                   <Field label="Cidade"><Input {...form.register("address_city")} /></Field>
-                  <Field label="UF"><Input maxLength={2} {...form.register("address_state")} /></Field>
+                  <Field label="UF">
+                    <Input
+                      maxLength={2}
+                      value={form.watch("address_state") ?? ""}
+                      onChange={(e) => form.setValue("address_state", e.target.value.toUpperCase().replace(/[^A-Z]/g, ""))}
+                    />
+                  </Field>
                 </TabsContent>
+                {isPj && (
+                  <TabsContent value="responsavel" className="grid gap-3 pt-4 md:grid-cols-2">
+                    <Field label="Nome do responsável" className="md:col-span-2">
+                      <Input {...form.register("resp1_name")} />
+                    </Field>
+                    <Field label="CPF do responsável">
+                      <Input
+                        inputMode="numeric"
+                        placeholder="000.000.000-00"
+                        value={form.watch("resp1_cpf") ?? ""}
+                        onChange={(e) => form.setValue("resp1_cpf", formatCpf(e.target.value))}
+                      />
+                    </Field>
+                    <Field label="Telefone do responsável">
+                      <Input
+                        placeholder="(00) 00000-0000"
+                        value={form.watch("resp1_phone") ?? ""}
+                        onChange={(e) => form.setValue("resp1_phone", formatPhone(e.target.value))}
+                      />
+                    </Field>
+                    <Field label="E-mail do responsável" className="md:col-span-2">
+                      <Input type="email" {...form.register("resp1_email")} />
+                    </Field>
+                  </TabsContent>
+                )}
               </Tabs>
               <div className="flex justify-end gap-2 border-t pt-4">
                 <Button type="submit" disabled={saveMut.isPending}>
