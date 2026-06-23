@@ -12,6 +12,7 @@ import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
+import { formatCpf, formatCnpj, formatPhone, formatCep, onlyDigits } from "@/lib/br-format";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({
